@@ -1,1 +1,85 @@
+const fetch = require('node-fetch');
+
+export default async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') return res.status(200).end();
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method tidak diizinkan' });
+
+  const url = req.url || '';
+
+  // CEK STATUS PEMBAYARAN
+  if (url.endsWith('/status')) {
+    try {
+      const { merchantOrderId } = req.body;
+      const merchantCode = process.env.DUITKU_MERCHANT_CODE;
+      const apiKey = process.env.DUITKU_API_KEY;
+      const isSandbox = process.env.DUITKU_SANDBOX === 'true';
+      const baseUrl = isSandbox ? 'https://sandbox.duitku.com' : 'https://app.duitku.com';
+      
+      const timestamp = Math.floor(Date.now() / 1000);
+      const signature = `${merchantCode}${merchantOrderId}${apiKey}`;
+
+      const response = await fetch(`${baseUrl}/webapi/api/merchant/transactionStatus`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ merchantCode, merchantOrderId, signature, timestamp })
+      });
+
+      return res.status(200).json(await response.json());
+    } catch (err) {
+      console.error('Status Error:', err);
+      return res.status(500).json({ error: err.message });
+    }
+  }
+
+  // BUAT PEMBAYARAN BARU
+  try {
+    const { amount, productName, buyerEmail, buyerName } = req.body;
+    const merchantCode = process.env.DUITKU_MERCHANT_CODE;
+    const apiKey = process.env.DUITKU_API_KEY;
+    const isSandbox = process.env.DUITKU_SANDBOX === 'true';
+    const baseUrl = isSandbox ? 'https://sandbox.duitku.com' : 'https://app.duitku.com';
+    
+    const timestamp = Math.floor(Date.now() / 1000);
+    const merchantOrderId = `KAZUKI-${Date.now()}`;
+    const signature = `${merchantCode}${timestamp}${apiKey}`;
+
+    const response = await fetch(`${baseUrl}/webapi/api/merchant/paymentmethod/get`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ merchantCode, paymentAmount: amount, signature, timestamp })
+    });
+
+    const data = await response.json();
+    if (data.paymentMethods?.length > 0) {
+      const firstMethod = data.paymentMethods[0];
+      const transRes = await fetch(`${baseUrl}/webapi/api/merchant/transaction/create`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          merchantCode,
+          paymentAmount: amount,
+          paymentMethod: firstMethod.paymentMethod,
+          merchantOrderId,
+          productDetails: productName,
+          customerVaName: buyerName || 'Pelanggan Kazuki Store',
+          email: buyerEmail || 'info@kazukistore.my.id',
+          callbackUrl: `${req.headers.origin}/api/callback`,
+          returnUrl: req.headers.origin,
+          expiryPeriod: 60,
+          signature,
+          timestamp
+        })
+      });
+      return res.status(200).json(await transRes.json());
+    }
+    res.status(200).json(data);
+  } catch (err) {
+    console.error('Error:', err);
+    res.status(500).json({ error: err.message });
+  }
+}
 
