@@ -106,6 +106,7 @@
             justify-content: center;
             padding: 20px;
         }
+        .auth-page.hidden { display: none; }
         .auth-card {
             background: rgba(30, 41, 59, 0.8);
             backdrop-filter: blur(12px);
@@ -129,7 +130,7 @@
             text-align: center;
             color: #94a3b8;
             font-size: 0.95rem;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
         .login-alert {
             background: rgba(96, 165, 250, 0.1);
@@ -230,11 +231,10 @@
             color: #94a3b8;
             font-size: 0.9rem;
         }
-        .switch-auth a {
+        .switch-auth span {
             color: #60a5fa;
-            text-decoration: none;
-            font-weight: 500;
             cursor: pointer;
+            font-weight: 500;
         }
         .message-box {
             margin-top: 15px;
@@ -458,7 +458,7 @@
                 </div>
                 <button class="main-btn" onclick="masuk()">Masuk</button>
                 <div class="message-box" id="pesanLogin"></div>
-                <p class="switch-auth">Belum punya akun? <a onclick="gantiForm('daftar')">Daftar di sini</a></p>
+                <p class="switch-auth">Belum punya akun? <span onclick="gantiForm('daftar')">Daftar di sini</span></p>
             </div>
 
             <!-- FORM DAFTAR -->
@@ -470,3 +470,194 @@
                 <div class="form-group">
                     <label>Email</label>
                     <input type="email" id="emailDaftar" placeholder="
+" placeholder="email@contoh.com">
+                </div>
+                <div class="form-group">
+                    <label>Kata Sandi</label>
+                    <input type="password" id="passDaftar" placeholder="Buat kata sandi">
+                </div>
+                <button class="main-btn" onclick="daftar()">Daftar</button>
+                <div class="message-box" id="pesanDaftar"></div>
+                <p class="switch-auth">Sudah punya akun? <span onclick="gantiForm('login')">Masuk di sini</span></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- === HALAMAN UTAMA / PRODUK === -->
+    <div class="main-page" id="halamanUtama">
+        <div class="nav-bar">
+            <span class="nav-logo">✨ KAZUKI STORE</span>
+            <div class="nav-user">
+                <span class="nav-username" id="namaUser">Halo!</span>
+                <button class="logout-btn" onclick="keluar()">Keluar</button>
+            </div>
+        </div>
+
+        <div class="hero">
+            <h1>Selamat Datang di Kazuki Store 🎉</h1>
+            <p>Produk Premium Terlengkap & Terpercaya</p>
+        </div>
+
+        <h2 class="section-title">Produk <span>PREMIUM</span></h2>
+        
+        <div class="products-grid">
+            <!-- PRODUK 1 -->
+            <div class="product-card">
+                <span class="product-premium-badge">PREMIUM</span>
+                <div class="product-icon">💎</div>
+                <h3 class="product-name">Diamond Pack</h3>
+                <p class="product-desc">Top Up Diamond Murah</p>
+                <div class="product-price">Rp 25.000</div>
+                <button class="buy-btn" onclick="beli('Diamond Pack', 25000)">Beli Sekarang</button>
+            </div>
+
+            <!-- PRODUK 2 -->
+            <div class="product-card">
+                <span class="product-premium-badge">PREMIUM</span>
+                <div class="product-icon">👑</div>
+                <h3 class="product-name">VIP Member</h3>
+                <p class="product-desc">Akses Fitur Eksklusif</p>
+                <div class="product-price">Rp 49.000</div>
+                <button class="buy-btn" onclick="beli('VIP Member', 49000)">Beli Sekarang</button>
+            </div>
+
+            <!-- PRODUK 3 -->
+            <div class="product-card">
+                <span class="product-premium-badge">PREMIUM</span>
+                <div class="product-icon">⚡</div>
+                <h3 class="product-name">Fast Pass</h3>
+                <p class="product-desc">Layanan Prioritas</p>
+                <div class="product-price">Rp 15.000</div>
+                <button class="buy-btn" onclick="beli('Fast Pass', 15000)">Beli Sekarang</button>
+            </div>
+
+            <!-- PRODUK 4 -->
+            <div class="product-card">
+                <span class="product-premium-badge">PREMIUM</span>
+                <div class="product-icon">🎮</div>
+                <h3 class="product-name">Game Bundle</h3>
+                <p class="product-desc">Item Langka & Skin</p>
+                <div class="product-price">Rp 99.000</div>
+                <button class="buy-btn" onclick="beli('Game Bundle', 99000)">Beli Sekarang</button>
+            </div>
+
+            <!-- PRODUK 5 -->
+            <div class="product-card">
+                <span class="product-premium-badge">PREMIUM</span>
+                <div class="product-icon">🚀</div>
+                <h3 class="product-name">Starter Pack</h3>
+                <p class="product-desc">Pemula Pilihan</p>
+                <div class="product-price">Rp 10.000</div>
+                <button class="buy-btn" onclick="beli('Starter Pack', 10000)">Beli Sekarang</button>
+            </div>
+
+            <!-- PRODUK 6 -->
+            <div class="product-card">
+                <span class="product-premium-badge">PREMIUM</span>
+                <div class="product-icon">🏆</div>
+                <h3 class="product-name">Ultimate Pack</h3>
+                <p class="product-desc">Semua Fitur Lengkap</p>
+                <div class="product-price">Rp 199.000</div>
+                <button class="buy-btn" onclick="beli('Ultimate Pack', 199000)">Beli Sekarang</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // === HILANGIN LOADING ===
+        window.onload = function() {
+            setTimeout(function() {
+                document.getElementById('layarLoading').classList.add('hidden');
+                // Cek apakah sudah login
+                if(localStorage.getItem('user')) {
+                    tampilHalamanUtama();
+                }
+            }, 1500);
+        };
+
+        // === GANTI FORM LOGIN/DAFTAR ===
+        function gantiForm(tipe) {
+            const formLogin = document.getElementById('formLogin');
+            const formDaftar = document.getElementById('formDaftar');
+            if(tipe === 'daftar') {
+                formLogin.style.display = 'none';
+                formDaftar.style.display = 'block';
+            } else {
+                formLogin.style.display = 'block';
+                formDaftar.style.display = 'none';
+            }
+        }
+
+        // === FUNGSI DAFTAR ===
+        function daftar() {
+            const nama = document.getElementById('namaDaftar').value.trim();
+            const email = document.getElementById('emailDaftar').value.trim();
+            const sandi = document.getElementById('passDaftar').value;
+            const pesan = document.getElementById('pesanDaftar');
+
+            if(!nama || !email || !sandi) {
+                pesan.className = 'message-box show msg-error';
+                pesan.innerHTML = '⚠️ Lengkapi semua data dulu!';
+                return;
+            }
+            if(sandi.length < 6) {
+                pesan.className = 'message-box show msg-error';
+                pesan.innerHTML = '⚠️ Kata sandi minimal 6 karakter!';
+                return;
+            }
+
+            localStorage.setItem('user', JSON.stringify({ nama, email }));
+            pesan.className = 'message-box show msg-success';
+            pesan.innerHTML = '✅ Berhasil daftar! Sedang masuk...';
+            setTimeout(tampilHalamanUtama, 1200);
+        }
+
+        // === FUNGSI MASUK ===
+        function masuk() {
+            const email = document.getElementById('emailLogin').value.trim();
+            const sandi = document.getElementById('passLogin').value;
+            const pesan = document.getElementById('pesanLogin');
+
+            if(!email || !sandi) {
+                pesan.className = 'message-box show msg-error';
+                pesan.innerHTML = '⚠️ Isi email & kata sandi dulu!';
+                return;
+            }
+
+            // Cek apakah ada akun atau buat sementara
+            const user = localStorage.getItem('user');
+            if(!user) {
+                pesan.className = 'message-box show msg-error';
+                pesan.innerHTML = '❌ Akun tidak ditemukan. Silakan daftar dulu!';
+                return;
+            }
+
+            pesan.className = 'message-box show msg-success';
+            pesan.innerHTML = '✅ Berhasil masuk! Sebentar...';
+            setTimeout(tampilHalamanUtama, 1000);
+        }
+
+        // === TAMPILKAN HALAMAN UTAMA ===
+        function tampilHalamanUtama() {
+            const user = JSON.parse(localStorage.getItem('user'));
+            document.getElementById('halamanLogin').style.display = 'none';
+            document.getElementById('halamanUtama').classList.add('show');
+            document.getElementById('namaUser').textContent = user ? user.nama : 'Halo!';
+        }
+
+        // === KELUAR / LOGOUT ===
+        function keluar() {
+            if(confirm('Yakin mau keluar?')) {
+                localStorage.removeItem('user');
+                location.reload();
+            }
+        }
+
+        // === BELI PRODUK ===
+        function beli(nama, harga) {
+            alert(`🛒 Pesanan:\n${nama}\nRp ${harga.toLocaleString('id-ID')}\n\nSilakan lanjut pembayaran di halaman pembayaran`);
+        }
+    </script>
+</body>
+</html>
+
