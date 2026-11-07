@@ -1,0 +1,13 @@
+{
+  "name": "kazuki-store",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Kazuki Store starter for Vercel, Firebase Auth and Duitku sandbox",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "firebase-admin": "^12.7.0",
+    "qrcode": "^1.5.4"
+  }
+}
