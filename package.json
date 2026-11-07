@@ -4,7 +4,7 @@
   "private": true,
   "description": "Kazuki Store starter for Vercel, Firebase Auth and Duitku sandbox",
   "engines": {
-    "node": ">=20"
+    "node": "20.x"
   },
   "dependencies": {
     "firebase-admin": "^12.7.0",
