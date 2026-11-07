@@ -1,1 +1,12 @@
+{
+  "name": "kazuki-store",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": "20.x"
+  },
+  "dependencies": {
+    "node-fetch": "^2.7.0"
+  }
+}
 
