@@ -5,198 +5,245 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kazuki Store</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
-        body { background: linear-gradient(180deg, #fdf2f8 0%, #fef7f0 100%); min-height: 100vh; }
-
-        /* LOADING SCREEN */
-        .loading-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(180deg, #fdf2f8 0%, #fef7f0 100%);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            z-index: 1000; transition: opacity 0.5s ease;
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        
+        body {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            min-height: 100vh;
         }
-        .loading-screen.hidden { opacity: 0; pointer-events: none; }
-        .loading-logo { font-size: 2rem; color: #8b5a7c; font-weight: 700; margin-bottom: 30px; letter-spacing: 2px; }
-        .spinner { width: 50px; height: 50px; border: 4px solid #f0e6ee; border-top-color: #b77aa8; border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .loading-text { margin-top: 20px; color: #9d8896; font-size: 0.9rem; }
 
-        /* AUTH */
-        .auth-container { max-width: 400px; margin: 0 auto; padding: 40px 20px; display: none; }
-        .auth-container.active { display: block; }
-        .auth-card { background: white; border-radius: 24px; padding: 30px 25px; box-shadow: 0 8px 30px rgba(139, 90, 124, 0.12); }
-        .auth-header { text-align: center; margin-bottom: 25px; }
-        .auth-header h2 { color: #8b5a7c; font-size: 1.5rem; }
-        .auth-header p { color: #9d8896; font-size: 0.9rem; margin-top: 5px; }
-        .tab-buttons { display: flex; margin-bottom: 20px; background: #f7f2f5; border-radius: 12px; padding: 4px; }
-        .tab-btn { flex: 1; padding: 10px; border: none; background: transparent; color: #9d8896; font-size: 0.95rem; border-radius: 10px; cursor: pointer; transition: all 0.2s; }
-        .tab-btn.active { background: white; color: #8b5a7c; font-weight: 600; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .divider { text-align: center; margin: 20px 0; color: #c9b9c4; font-size: 0.85rem; }
-        .google-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 12px; background: white; border: 2px solid #f0e6ee; border-radius: 12px; font-size: 1rem; cursor: pointer; transition: all 0.2s; }
-        .google-btn:hover { border-color: #d4c5d0; background: #fefcfd; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 6px; font-weight: 500; color: #6b5866; font-size: 0.9rem; }
-        input { width: 100%; padding: 12px 15px; border: 2px solid #f0e6ee; border-radius: 12px; font-size: 0.95rem; background: #fefcfd; }
-        input:focus { outline: none; border-color: #d4b9ce; }
-        .submit-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, #b77aa8 0%, #9d6ea0 100%); color: white; border: none; border-radius: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; margin-top: 5px; transition: transform 0.2s; }
-        .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(183, 122, 168, 0.35); }
-        .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-        .auth-switch { text-align: center; margin-top: 15px; font-size: 0.85rem; color: #9d8896; }
-        .auth-switch a { color: #8b5a7c; text-decoration: none; font-weight: 500; }
-        .message { margin-top: 12px; padding: 10px; border-radius: 8px; font-size: 0.85rem; display: none; }
-        .message.show { display: block; }
-        .success { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
-        .error { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+        /* LOADING */
+        .loading {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            transition: opacity 0.5s ease;
+        }
+        .loading.hide { opacity: 0; pointer-events: none; }
+        .loading h1 { font-size: 2rem; color: #1565c0; margin-bottom: 30px; }
+        .ring {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #90caf9;
+            border-top-color: #1976d2;
+            border-radius: 50%;
+            animation: putar 0.8s linear infinite;
+        }
+        @keyframes putar { to { transform: rotate(360deg); } }
+        .loading p { margin-top: 15px; color: #4296e7; font-size: 0.9rem; }
 
-        /* MAIN CONTENT */
-        .main-container { max-width: 400px; margin: 0 auto; padding: 20px; display: none; }
-        .main-container.active { display: block; }
-        .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-        .header-bar h1 { font-size: 1.5rem; color: #8b5a7c; }
-        .logout-btn { padding: 8px 16px; background: #f0e6ee; color: #8b5a7c; border: none; border-radius: 8px; cursor: pointer; font-size: 0.85rem; }
-        .profile-card { background: white; border-radius: 24px; padding: 20px; text-align: center; box-shadow: 0 8px 30px rgba(139, 90, 124, 0.12); margin-bottom: 25px; }
-        .profile-img { width: 140px; height: 140px; border-radius: 50%; object-fit: cover; border: 4px solid #f3e8f0; margin-bottom: 15px; }
-        .profile-name { font-size: 1.2rem; font-weight: 600; color: #5a3f54; margin-bottom: 5px; }
-        .profile-email { color: #9d8896; font-size: 0.85rem; }
-        .card { background: white; border-radius: 20px; padding: 25px; box-shadow: 0 6px 20px rgba(139, 90, 124, 0.08); margin-bottom: 20px; }
-        .product-card { text-align: center; }
-        .product-icon { font-size: 50px; margin-bottom: 12px; }
-        .product-name { font-size: 1.1rem; font-weight: 600; color: #5a3f54; margin-bottom: 8px; }
-        .product-price { font-size: 1.6rem; font-weight: 700; color: #b77aa8; }
-        .result { margin-top: 15px; padding: 15px; border-radius: 12px; display: none; font-size: 0.9rem; }
-        .result.show { display: block; }
-        .loading-text-sm { text-align: center; display: none; color: #9d6ea0; margin-top: 10px; font-size: 0.9rem; }
-        .loading-text-sm.show { display: block; }
-        footer { text-align: center; color: #a898a3; margin-top: 30px; font-size: 0.8rem; }
-        a { color: #b77aa8; text-decoration: none; font-weight: 500; }
-        .status-pending { background: #fffbeb; border: 1px solid #fde68a; color: #92400e; }
+        /* KONTEN */
+        .wrap { max-width: 400px; margin: 0 auto; padding: 20px; display: none; }
+        .wrap.show { display: block; }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .top-bar h2 { color: #0d47a1; font-size: 1.4rem; }
+        .keluar {
+            background: #90caf9;
+            color: #0d47a1;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .profil {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(13, 71, 161, 0.1);
+            margin-bottom: 20px;
+        }
+        .profil img {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #90caf9;
+            margin-bottom: 15px;
+        }
+        .profil h3 { color: #0d47a1; font-size: 1.2rem; }
+        .profil p { color: #5e92d3; font-size: 0.9rem; margin-top: 5px; }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 22px;
+            box-shadow: 0 4px 15px rgba(13, 71, 161, 0.08);
+            margin-bottom: 16px;
+        }
+        .produk { text-align: center; }
+        .produk .ikon { font-size: 45px; margin-bottom: 8px; }
+        .produk h4 { color: #0d47a1; font-size: 1rem; }
+        .harga { font-size: 1.8rem; font-weight: 700; color: #1565c0; margin-top: 8px; }
+
+        label { display: block; margin-bottom: 6px; color: #16509c; font-weight: 500; font-size: 0.9rem; }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #bbdefb;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            margin-bottom: 14px;
+            background: #f5faff;
+        }
+        input:focus { outline: none; border-color: #1976d2; }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #2196f3, #1565c0);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        .btn:hover { transform: translateY(-2px); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+        .pesan {
+            margin-top: 12px;
+            padding: 12px;
+            border-radius: 8px;
+            display: none;
+            font-size: 0.9rem;
+        }
+        .pesan.tampil { display: block; }
+        .sukses { background: #e8f5e9; color: #2e7d32; }
+        .gagal { background: #ffebee; color: #c62828; }
+        .info { background: #e3f2fd; color: #1565c0; }
+
+        a { color: #1976d2; text-decoration: none; font-weight: 500; }
+
+        footer { text-align: center; margin-top: 30px; color: #5e92d3; font-size: 0.8rem; }
     </style>
 </head>
 <body>
 
-    <!-- LOADING SCREEN -->
-    <div class="loading-screen" id="loadingScreen">
-        <div class="loading-logo">✨ Kazuki Store</div>
-        <div class="spinner"></div>
-        <div class="loading-text">Sedang memuat...</div>
+    <!-- LOADING -->
+    <div class="loading" id="layarLoading">
+        <h1>✨ Kazuki Store</h1>
+        <div class="ring"></div>
+        <p>Memuat...</p>
     </div>
 
-    <!-- HALAMAN LOGIN / DAFTAR -->
-    <div class="auth-container" id="authPage">
-        <div class="auth-card">
-            <div class="auth-header">
-                <h2>Selamat Datang</h2>
-                <p>Masuk ke Kazuki Store</p>
-            </div>
-
-            <div class="tab-buttons">
-                <button class="tab-btn active" id="loginTab" onclick="switchTab('login')">Masuk</button>
-                <button class="tab-btn" id="registerTab" onclick="switchTab('register')">Daftar</button>
-            </div>
-
-            <!-- FORM LOGIN -->
-            <div id="loginForm">
-                <button class="google-btn" onclick="alert('Fitur Google akan disiapkan pakai Firebase! Gunakan email dulu ya 😊')">
-                    <span>🔵</span> Masuk dengan Google
-                </button>
-                <div class="divider">atau</div>
-                <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" id="loginEmail" placeholder="email@contoh.com">
-                </div>
-                <div class="form-group">
-                    <label>Kata Sandi</label>
-                    <input type="password" id="loginPass" placeholder="Masukkan kata sandi">
-                </div>
-                <button class="submit-btn" onclick="login()">Masuk</button>
-                <div class="message" id="loginMsg"></div>
-            </div>
-
-            <!-- FORM DAFTAR -->
-            <div id="registerForm" style="display: none;">
-                <button class="google-btn" onclick="alert('Fitur Google akan disiapkan pakai Firebase! Gunakan email dulu ya 😊')">
-                    <span>🔵</span> Daftar dengan Google
-                </button>
-                <div class="divider">atau</div>
-                <div class="form-group">
-                    <label>Nama Lengkap</label>
-                    <input type="text" id="regName" placeholder="Nama kamu">
-                </div>
-                <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" id="regEmail" placeholder="email@contoh.com">
-                </div>
-                <div class="form-group">
-                    <label>Kata Sandi</label>
-                    <input type="password" id="regPass" placeholder="Buat kata sandi">
-                </div>
-                <button class="submit-btn" onclick="register()">Daftar</button>
-                <div class="message" id="regMsg"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- HALAMAN UTAMA -->
-    <div class="main-container" id="mainPage">
-        <div class="header-bar">
-            <h1>✨ Kazuki Store</h1>
-            <button class="logout-btn" onclick="logout()">Keluar</button>
+    <!-- KONTEN UTAMA -->
+    <div class="wrap" id="kontenUtama">
+        <div class="top-bar">
+            <h2>✨ Kazuki Store</h2>
+            <button class="keluar" onclick="keluar()">Keluar</button>
         </div>
 
-        <div class="profile-card">
-            <img src="https://c.termai.cc/i152/cQu5Lx.jpg" alt="Profil" class="profile-img" 
-                 onerror="this.src='https://via.placeholder.com/140/eadcdf/8b5a7c?text=👤'">
-            <div class="profile-name" id="userName">Pengguna</div>
-            <div class="profile-email" id="userEmail">email@contoh.com</div>
+        <div class="profil">
+            <img src="https://c.termai.cc/i152/cQu5Lx.jpg" alt="Profil" 
+                 onerror="this.src='https://via.placeholder.com/130/e3f2fd/1565c0?text=👤'">
+            <h3>Kazuki Store</h3>
+            <p>Belanja Mudah & Terpercaya</p>
         </div>
 
-        <div class="card product-card">
-            <div class="product-icon">🎀</div>
-            <div class="product-name">Produk Pilihan</div>
-            <div class="product-price" id="price">Rp 50.000</div>
+        <div class="card produk">
+            <div class="ikon">🎁</div>
+            <h4>Produk Pilihan</h4>
+            <div class="harga">Rp 50.000</div>
         </div>
 
         <div class="card">
-            <div class="form-group">
-                <label>Nama Produk</label>
-                <input type="text" id="productName" value="Produk Kazuki Store" required>
-            </div>
-            <div class="form-group">
-                <label>Harga (Rp)</label>
-                <input type="number" id="amount" value="50000" required>
-            </div>
-            <div class="form-group">
-                <label>Nama Pembeli</label>
-                <input type="text" id="buyerName" required>
-            </div>
-            <div class="form-group">
-                <label>Email Pembeli</label>
-                <input type="email" id="buyerEmail" required>
-            </div>
-            <button class="submit-btn" id="payBtn" onclick="createPayment()">💳 Buat Pembayaran</button>
-            <div class="loading-text-sm" id="payLoading">⏳ Sedang memproses...</div>
-            <div class="result" id="payResult"></div>
+            <label>Nama Produk</label>
+            <input type="text" id="namaProduk" value="Produk Kazuki Store">
+            
+            <label>Harga (Rp)</label>
+            <input type="number" id="hargaProduk" value="50000">
+            
+            <label>Nama Pembeli</label>
+            <input type="text" id="namaPembeli" placeholder="Masukkan nama kamu">
+            
+            <label>Email Pembeli</label>
+            <input type="email" id="emailPembeli" placeholder="email@contoh.com">
+            
+            <button class="btn" id="btnBayar" onclick="buatPembayaran()">💳 Buat Pembayaran</button>
+            <div class="pesan" id="kotakPesan"></div>
         </div>
 
-        <!-- CEK STATUS PESANAN -->
-        <div class="card">
-            <div class="form-group">
-                <label>📋 Nomor Pesanan</label>
-                <input type="text" id="checkOrderId" placeholder="KAZUKI-1234567890">
-            </div>
-            <button class="submit-btn" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);" onclick="checkStatus()">🔍 Cek Status Pembayaran</button>
-            <div class="result" id="statusResult"></div>
-        </div>
-
-        <footer>© 2026 Kazuki Store • Pembayaran Aman dengan Duitku</footer>
+        <footer>© 2026 Kazuki Store • Semua Hak Dilindungi</footer>
     </div>
 
     <script>
-        const STORAGE_KEY = 'kazuki_user';
+        // HILANGIN LOADING PASTI JALAN!
+        window.onload = function() {
+            setTimeout(function() {
+                document.getElementById('layarLoading').classList.add('hide');
+                document.getElementById('kontenUtama').classList.add('show');
+            }, 1200);
+        };
 
-        // LOADING
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                document.getElementById('loadingScreen').classList.add('hidden');
-                check
+        function keluar() {
+            if(confirm('Yakin mau keluar?')) location.reload();
+        }
 
+        function tampilPesan(jenis, teks) {
+            const el = document.getElementById('kotakPesan');
+            el.className = 'pesan tampil ' + jenis;
+            el.innerHTML = teks;
+        }
+
+        async function buatPembayaran() {
+            const btn = document.getElementById('btnBayar');
+            const namaPembeli = document.getElementById('namaPembeli').value.trim();
+            const emailPembeli = document.getElementById('emailPembeli').value.trim();
+            const namaProduk = document.getElementById('namaProduk').value.trim();
+            const harga = parseInt(document.getElementById('hargaProduk').value);
+
+            if (!namaPembeli || !emailPembeli) {
+                tampilPesan('gagal', '⚠️ Isi nama & email dulu!');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '⏳ Memproses...';
+            tampilPesan('info', '⏳ Sedang membuat pesanan...');
+
+            try {
+                const res = await fetch('/api/create-payment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        amount: harga,
+                        productName: namaProduk,
+                        buyerName: namaPembeli,
+                        buyerEmail: emailPembeli
+                    })
+                });
+
+                const data = await res.json();
+                
+                if (data.paymentUrl) {
+                    tampilPesan('sukses', `✅ Berhasil! No. Pesanan: <strong>${data.merchantOrderId}</strong><br>
+                    <a href="${data.paymentUrl}" target="_blank">👉 Klik di sini untuk membayar</a>`);
+                } else {
+                    tampilPesan('gagal', '❌ Gagal: ' + (data.error || 'Coba lagi nanti'));
+                }
+            } catch (err) {
+                tampilPesan('gagal', '❌ Kesalahan jaringan. Coba lagi ya!');
+            }
+
+            btn.disabled = false;
+            btn.innerHTML = '💳 Buat Pembayaran';
+        }
+    </script>
+</body>
+</html>
