@@ -3,465 +3,412 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kazuki Store</title>
+    <title>Kazuki Store | Marketplace Gaming</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
-
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
                         primary: '#00D9FF',
-                        secondary: '#60A5FA',
-                        dark: '#080E27',
-                        card: '#1E293B',
+                        dark: '#050816',
+                        darker: '#03050F',
+                        card: '#0F172A',
+                        'card-light': '#1E293B',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
                     },
                 }
             }
         }
     </script>
-
-    <style>
-        body {
-            background: #080E27;
-            color: #F8FAFC;
-            font-family: 'Inter', system-ui, sans-serif;
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .text-gradient {
+                background-clip: text;
+                -webkit-background-clip: text;
+                color: transparent;
+                background-image: linear-gradient(90deg, #00D9FF, #60A5FA);
+            }
+            .bg-glass {
+                background: rgba(15, 23, 42, 0.7);
+                backdrop-filter: blur(12px);
+            }
+            .card-hover {
+                transition: all 0.3s ease;
+            }
+            .card-hover:hover {
+                transform: translateY(-6px);
+                box-shadow: 0 20px 40px rgba(0, 217, 255, 0.1);
+                border-color: rgba(0, 217, 255, 0.3);
+            }
         }
-
-        .text-gradient {
-            background: linear-gradient(90deg, #00D9FF, #60A5FA);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .btn-primary {
-            background: linear-gradient(90deg, #00D9FF, #60A5FA);
-            color: #080E27;
-            font-weight: 700;
-            padding: 10px 20px;
-            border-radius: 12px;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .btn-primary:hover {
-            box-shadow: 0 0 20px rgba(0, 217, 255, 0.5);
-            transform: translateY(-2px);
-        }
-
-        .btn-secondary {
-            background: #1E293B;
-            color: #F8FAFC;
-            font-weight: 600;
-            padding: 10px 20px;
-            border-radius: 12px;
-            border: 1px solid #334155;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .btn-secondary:hover {
-            border-color: #00D9FF;
-            color: #00D9FF;
-        }
-
-        .card {
-            background: #1E293B;
-            border: 1px solid #334155;
-            border-radius: 16px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-        .card:hover {
-            border-color: #00D9FF;
-            transform: translateY(-4px);
-            box-shadow: 0 10px 30px rgba(0, 217, 255, 0.1);
-        }
-
-        .badge {
-            background: rgba(0, 217, 255, 0.1);
-            color: #00D9FF;
-            padding: 4px 12px;
-            border-radius: 999px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .input-field {
-            width: 100%;
-            background: #080E27;
-            border: 1px solid #334155;
-            border-radius: 10px;
-            padding: 12px 16px;
-            color: #F8FAFC;
-            font-size: 15px;
-            outline: none;
-            transition: all 0.3s ease;
-        }
-        .input-field:focus {
-            border-color: #00D9FF;
-            box-shadow: 0 0 0 3px rgba(0, 217, 255, 0.1);
-        }
-
-        .modal-backdrop {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(6px);
-            z-index: 49;
-        }
-        .modal-container {
-            position: fixed;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            z-index: 50;
-        }
-        .modal-content {
-            background: #1E293B;
-            border: 1px solid #334155;
-            border-radius: 20px;
-            padding: 30px;
-            width: 100%;
-            max-width: 420px;
-            position: relative;
-        }
-
-        .avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: linear-gradient(90deg, #00D9FF, #60A5FA);
-            color: #080E27;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .user-menu {
-            display: none;
-            align-items: center;
-            gap: 10px;
-        }
-        .user-menu.show {
-            display: flex;
-        }
-
-        .nav-wrapper {
-            position: sticky;
-            top: 0;
-            z-index: 40;
-            background: rgba(8, 14, 39, 0.9);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid #1E293B;
-        }
-
-        .grid-auto {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 24px;
-        }
-
-        .hidden { display: none !important; }
     </style>
 </head>
-<body>
+<body class="bg-darker text-gray-100 min-h-screen font-sans">
 
 <!-- Navbar -->
-<div class="nav-wrapper">
-    <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
-        <div style="display: flex; align-items: center; justify-content: space-between; height: 64px;">
+<header class="sticky top-0 z-50 border-b border-gray-800 bg-glass">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16 md:h-20">
             <!-- Logo -->
-            <div style="display: flex; align-items: center; gap: 8px; font-size: 1.4rem; font-weight: 800;">
-                <span class="text-gradient">✨ KAZUKI STORE</span>
-            </div>
+            <a href="#" class="text-xl font-bold tracking-tight">
+                <span class="text-gradient">KAZUKI STORE</span>
+            </a>
 
-            <!-- Menu Desktop -->
-            <div style="display: flex; gap: 32px;">
-                <a href="#" style="color: #CBD5E1; text-decoration: none;">Beranda</a>
-                <a href="#" style="color: #CBD5E1; text-decoration: none;">Produk</a>
-                <a href="#" style="color: #CBD5E1; text-decoration: none;">Tentang</a>
-                <a href="#" style="color: #CBD5E1; text-decoration: none;">Kontak</a>
-            </div>
+            <!-- Desktop Navigation -->
+            <nav class="hidden md:flex items-center space-x-8">
+                <a href="#" class="text-gray-300 hover:text-primary transition-colors">Beranda</a>
+                <a href="#" class="text-gray-300 hover:text-primary transition-colors">Produk</a>
+                <a href="#" class="text-gray-300 hover:text-primary transition-colors">Tentang</a>
+                <a href="#" class="text-gray-300 hover:text-primary transition-colors">Kontak</a>
+            </nav>
 
-            <!-- Tombol -->
-            <div style="display: flex; align-items: center; gap: 12px;">
-                <div id="userMenu" class="user-menu">
-                    <div class="avatar" id="userAvatar">K</div>
-                    <span id="userName">Kazuki</span>
-                    <button onclick="keluar()" style="background:none; border:none; color:#94A3B8; cursor:pointer;">
+            <!-- Right Actions -->
+            <div class="flex items-center gap-3">
+                <div id="userMenu" class="hidden items-center gap-2">
+                    <div class="w-8 h-8 rounded-full bg-gradient-to-r from-primary to-blue-500 flex items-center justify-center text-dark font-bold">
+                        <span id="userInitial">K</span>
+                    </div>
+                    <span class="hidden sm:inline text-sm font-medium" id="userName">Kazuki</span>
+                    <button onclick="logout()" class="text-gray-400 hover:text-red-400 ml-1">
                         <i class="fa fa-sign-out"></i>
                     </button>
                 </div>
-                <button id="btnMasuk" class="btn-secondary" onclick="bukaModal('login')">Masuk</button>
-                <button id="btnDaftar" class="btn-primary" onclick="bukaModal('daftar')">Daftar</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Hero Section -->
-<section style="max-width: 1200px; margin: 0 auto; padding: 60px 20px;">
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;">
-        <div>
-            <span class="badge" style="display: inline-block; margin-bottom: 20px;">⚡ Marketplace Premium Terpercaya</span>
-            <h1 style="font-size: 3.2rem; line-height: 1.2; margin-bottom: 24px;">
-                Trade Gaming Goods<br>
-                <span class="text-gradient">Securely</span>
-            </h1>
-            <p style="color: #94A3B8; font-size: 1.1rem; margin-bottom: 32px; line-height: 1.7;">
-                Beli dan jual akun, mata uang, item, dan layanan game dari penjual terpercaya. Transaksi aman & instan!
-            </p>
-            <div style="display: flex; gap: 16px; margin-bottom: 48px;">
-                <button class="btn-primary" onclick="bukaModal('login')">
-                    <i class="fa fa-shopping-cart"></i> Mulai Belanja
-                </button>
-                <button class="btn-secondary">
-                    <i class="fa fa-info-circle"></i> Pelajari Lebih
+                <div id="guestMenu" class="flex items-center gap-2">
+                    <button onclick="openModal('login')" class="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white transition-colors">Masuk</button>
+                    <button onclick="openModal('register')" class="px-4 py-2 text-sm font-medium bg-gradient-to-r from-primary to-blue-500 text-dark rounded-lg hover:opacity-90 transition-opacity">Daftar</button>
+                </div>
+                <button class="md:hidden text-xl ml-2">
+                    <i class="fa fa-bars"></i>
                 </button>
             </div>
-            <div style="display: flex; gap: 40px;">
-                <div><div style="font-size: 1.8rem; font-weight: bold;">250+</div><div style="color: #94A3B8; font-size: 0.9rem;">Produk</div></div>
-                <div><div style="font-size: 1.8rem; font-weight: bold;">$30M+</div><div style="color: #94A3B8; font-size: 0.9rem;">Transaksi</div></div>
-                <div><div style="font-size: 1.8rem; font-weight: bold;">99%</div><div style="color: #94A3B8; font-size: 0.9rem;">Kepuasan</div></div>
-                <div><div style="font-size: 1.8rem; font-weight: bold;">200+</div><div style="color: #94A3B8; font-size: 0.9rem;">Penjual</div></div>
-            </div>
-        </div>
-        <div style="display: flex; justify-content: center;">
-            <div style="background: #1E293B; border-radius: 20px; padding: 16px; border: 1px solid #334155;">
-                <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=600&h=400&fit=crop" alt="Gaming" style="border-radius: 12px; width: 100%; max-width: 500px;">
-            </div>
         </div>
     </div>
-</section>
+</header>
 
-<!-- Kategori -->
-<section style="max-width: 1200px; margin: 0 auto; padding: 40px 20px;">
-    <h2 style="font-size: 1.8rem; text-align: center; margin-bottom: 40px;">Kategori Populer</h2>
-    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;">
-        <div class="card" style="padding: 30px; text-align: center;">
-            <div style="font-size: 2.5rem; margin-bottom: 12px;">💎</div>
-            <h3 style="font-weight: 600; margin-bottom: 6px;">Diamond</h3>
-            <p style="color: #94A3B8; font-size: 0.9rem;">Top up aman & instan</p>
-        </div>
-        <div class="card" style="padding: 30px; text-align: center;">
-            <div style="font-size: 2.5rem; margin-bottom: 12px;">🏆</div>
-            <h3 style="font-weight: 600; margin-bottom: 6px;">Akun Game</h3>
-            <p style="color: #94A3B8; font-size: 0.9rem;">Terverifikasi</p>
-        </div>
-        <div class="card" style="padding: 30px; text-align: center;">
-            <div style="font-size: 2.5rem; margin-bottom: 12px;">🎁</div>
-            <h3 style="font-weight: 600; margin-bottom: 6px;">Item & Skin</h3>
-            <p style="color: #94A3B8; font-size: 0.9rem;">Eksklusif</p>
-        </div>
-        <div class="card" style="padding: 30px; text-align: center;">
-            <div style="font-size: 2.5rem; margin-bottom: 12px;">⚡</div>
-            <h3 style="font-weight: 600; margin-bottom: 6px;">Jasa</h3>
-            <p style="color: #94A3B8; font-size: 0.9rem;">Boosting & Joki</p>
-        </div>
-    </div>
-</section>
-
-<!-- Produk -->
-<section style="max-width: 1200px; margin: 0 auto; padding: 40px 20px;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-        <h2 style="font-size: 1.8rem;">Produk Terlaris</h2>
-        <a href="#" style="color: #00D9FF; text-decoration: none;">Lihat Semua →</a>
-    </div>
-    <div class="grid-auto">
-        <div class="card">
-            <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=400&h=250&fit=crop" style="width: 100%; height: 180px; object-fit: cover;">
-            <div style="padding: 20px;">
-                <span class="badge">💎 Diamond</span>
-                <h3 style="font-weight: 600; margin: 10px 0;">Diamond Mobile Legends</h3>
-                <p style="color: #94A3B8; font-size: 0.9rem; margin-bottom: 16px;">Stok aman, proses instan.</p>
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span style="color: #00D9FF; font-weight: bold; font-size: 1.1rem;">Rp 5.000</span>
-                    <button class="btn-primary" style="padding: 6px 16px; font-size: 0.9rem;" onclick="beli('Diamond ML', 5000)">Beli</button>
+<main>
+    <!-- Hero Section -->
+    <section class="pt-12 md:pt-20 pb-20">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="space-y-6">
+                    <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium">
+                        <i class="fa fa-bolt"></i> Marketplace Premium Terpercaya
+                    </span>
+                    <h1 class="text-[clamp(2.5rem,5vw,4rem)] font-bold leading-tight">
+                        Trade Gaming Goods<br>
+                        <span class="text-gradient">Securely</span>
+                    </h1>
+                    <p class="text-gray-400 text-lg max-w-lg">
+                        Beli dan jual akun, mata uang, item, dan layanan game dengan aman. Transaksi cepat, terpercaya, dan didukung sistem perlindungan pembeli.
+                    </p>
+                    <div class="flex flex-wrap gap-4 pt-2">
+                        <button onclick="openModal('login')" class="px-8 py-3 bg-gradient-to-r from-primary to-blue-500 text-dark font-semibold rounded-lg hover:opacity-90 transition-opacity flex items-center gap-2">
+                            <i class="fa fa-shopping-cart"></i> Mulai Belanja
+                        </button>
+                        <button class="px-8 py-3 bg-card-light border border-gray-700 text-white font-semibold rounded-lg hover:border-primary/50 transition-colors flex items-center gap-2">
+                            <i class="fa fa-info-circle"></i> Pelajari Lebih
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-4 gap-6 pt-8">
+                        <div>
+                            <p class="text-2xl font-bold">250+</p>
+                            <p class="text-gray-500 text-sm">Produk</p>
+                        </div>
+                        <div>
+                            <p class="text-2xl font-bold">$30M+</p>
+                            <p class="text-gray-500 text-sm">Transaksi</p>
+                        </div>
+                        <div>
+                            <p class="text-2xl font-bold">99%</p>
+                            <p class="text-gray-500 text-sm">Kepuasan</p>
+                        </div>
+                        <div>
+                            <p class="text-2xl font-bold">200+</p>
+                            <p class="text-gray-500 text-sm">Penjual</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative">
+                    <div class="absolute inset-0 bg-primary/10 rounded-2xl blur-3xl"></div>
+                    <div class="relative border border-gray-800 rounded-2xl p-3 bg-card">
+                        <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=600&h=400&fit=crop" alt="Gaming" class="w-full h-[320px] object-cover rounded-xl">
+                    </div>
                 </div>
             </div>
         </div>
+    </section>
 
-        <div class="card">
-            <img src="https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?w=400&h=250&fit=crop" style="width: 100%; height: 180px; object-fit: cover;">
-            <div style="padding: 20px;">
-                <span class="badge">🏆 Akun</span>
-                <h3 style="font-weight: 600; margin: 10px 0;">Akun Valorant</h3>
-                <p style="color: #94A3B8; font-size: 0.9rem; margin-bottom: 16px;">Skin banyak & aman.</p>
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span style="color: #00D9FF; font-weight: bold; font-size: 1.1rem;">Rp 150.000</span>
-                    <button class="btn-primary" style="padding: 6px 16px; font-size: 0.9rem;" onclick="beli('Akun Valorant', 150000)">Beli</button>
+    <!-- Categories -->
+    <section class="py-16 bg-card/30">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-2xl md:text-3xl font-bold mb-3">Kategori Populer</h2>
+                <p class="text-gray-400 max-w-xl mx-auto">Temukan apa yang kamu butuhkan dengan mudah</p>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-5">
+                <div class="bg-card border border-gray-800 rounded-xl p-6 text-center card-hover">
+                    <div class="text-3xl mb-3">💎</div>
+                    <h3 class="font-semibold mb-1">Diamond</h3>
+                    <p class="text-gray-500 text-sm">Top Up Instan</p>
+                </div>
+                <div class="bg-card border border-gray-800 rounded-xl p-6 text-center card-hover">
+                    <div class="text-3xl mb-3">🏆</div>
+                    <h3 class="font-semibold mb-1">Akun Game</h3>
+                    <p class="text-gray-500 text-sm">Terverifikasi</p>
+                </div>
+                <div class="bg-card border border-gray-800 rounded-xl p-6 text-center card-hover">
+                    <div class="text-3xl mb-3">🎁</div>
+                    <h3 class="font-semibold mb-1">Item & Skin</h3>
+                    <p class="text-gray-500 text-sm">Eksklusif</p>
+                </div>
+                <div class="bg-card border border-gray-800 rounded-xl p-6 text-center card-hover">
+                    <div class="text-3xl mb-3">⚡</div>
+                    <h3 class="font-semibold mb-1">Jasa</h3>
+                    <p class="text-gray-500 text-sm">Boosting & Joki</p>
                 </div>
             </div>
         </div>
+    </section>
 
-        <div class="card">
-            <img src="https://images.unsplash.com/photo-1593305841991-05c22158a4c1?w=400&h=250&fit=crop" style="width: 100%; height: 180px; object-fit: cover;">
-            <div style="padding: 20px;">
-                <span class="badge">⚡ Jasa</span>
-                <h3 style="font-weight: 600; margin: 10px 0;">Jasa Boosting Rank</h3>
-                <p style="color: #94A3B8; font-size: 0.9rem; margin-bottom: 16px;">Pro player, cepat & aman.</p>
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span style="color: #00D9FF; font-weight: bold; font-size: 1.1rem;">Rp 20.000</span>
-                    <button class="btn-primary" style="padding: 6px 16px; font-size: 0.9rem;" onclick="beli('Jasa Boosting', 20000)">Beli</button>
+    <!-- Featured Products -->
+    <section class="py-20">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center mb-10">
+                <h2 class="text-2xl md:text-3xl font-bold">Produk Terlaris</h2>
+                <a href="#" class="text-primary hover:underline">Lihat Semua <i class="fa fa-arrow-right ml-1 text-sm"></i></a>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Product 1 -->
+                <div class="bg-card border border-gray-800 rounded-xl overflow-hidden card-hover">
+                    <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=400&h=250&fit=crop" class="w-full h-44 object-cover">
+                    <div class="p-5">
+                        <span class="text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded">💎 Diamond</span>
+                        <h3 class="font-semibold mt-2 mb-1">Diamond Mobile Legends</h3>
+                        <p class="text-gray-500 text-sm mb-4">Stok tersedia 24 jam, proses instan</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-lg font-bold text-primary">Rp 5.000</span>
+                            <button onclick="handleBuy('Diamond ML', 5000)" class="px-4 py-2 bg-primary/10 text-primary text-sm font-medium rounded-lg hover:bg-primary/20 transition-colors">Beli</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Product 2 -->
+                <div class="bg-card border border-gray-800 rounded-xl overflow-hidden card-hover">
+                    <img src="https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?w=400&h=250&fit=crop" class="w-full h-44 object-cover">
+                    <div class="p-5">
+                        <span class="text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded">🏆 Akun</span>
+                        <h3 class="font-semibold mt-2 mb-1">Akun Valorant Skin Banyak</h3>
+                        <p class="text-gray-500 text-sm mb-4">Semua data aman, transfer kepemilikan</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-lg font-bold text-primary">Rp 150.000</span>
+                            <button onclick="handleBuy('Akun Valorant', 150000)" class="px-4 py-2 bg-primary/10 text-primary text-sm font-medium rounded-lg hover:bg-primary/20 transition-colors">Beli</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Product 3 -->
+                <div class="bg-card border border-gray-800 rounded-xl overflow-hidden card-hover">
+                    <img src="https://images.unsplash.com/photo-1593305841991-05c22158a4c1?w=400&h=250&fit=crop" class="w-full h-44 object-cover">
+                    <div class="p-5">
+                        <span class="text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded">⚡ Jasa</span>
+                        <h3 class="font-semibold mt-2 mb-1">Jasa Boosting Rank</h3>
+                        <p class="text-gray-500 text-sm mb-4">Dikerjakan pro player, aman & cepat</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-lg font-bold text-primary">Rp 20.000</span>
+                            <button onclick="handleBuy('Jasa Boosting', 20000)" class="px-4 py-2 bg-primary/10 text-primary text-sm font-medium rounded-lg hover:bg-primary/20 transition-colors">Beli</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- Kenapa Kami -->
-<section style="max-width: 1200px; margin: 0 auto; padding: 60px 20px;">
-    <div style="text-align: center; margin-bottom: 50px;">
-        <h2 style="font-size: 1.8rem; margin-bottom: 12px;">Kenapa Pilih <span class="text-gradient">Kazuki Store?</span></h2>
-        <p style="color: #94A3B8;">Transaksi aman, cepat, dan terpercaya</p>
-    </div>
-    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;">
-        <div class="card" style="padding: 30px; text-align: center;">
-            <div style="width: 60px; height: 60px; border-radius: 50%; background: rgba(0,217,255,0.1); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
-                <i class="fa fa-shield" style="font-size: 24px; color: #00D9FF;"></i>
+    <!-- Why Us -->
+    <section class="py-20 bg-card/30">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-14">
+                <h2 class="text-2xl md:text-3xl font-bold mb-4">Kenapa Pilih <span class="text-gradient">Kazuki Store?</span></h2>
+                <p class="text-gray-400 max-w-xl mx-auto">Kami berkomitmen memberikan pengalaman transaksi terbaik untuk kamu</p>
             </div>
-            <h3 style="font-size: 1.1rem; margin-bottom: 8px;">Transaksi Aman</h3>
-            <p style="color: #94A3B8; font-size: 0.95rem;">Dana baru diteruskan setelah barang diterima</p>
-        </div>
-        <div class="card" style="padding: 30px; text-align: center;">
-            <div style="width: 60px; height: 60px; border-radius: 50%; background: rgba(0,217,255,0.1); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
-                <i class="fa fa-bolt" style="font-size: 24px; color: #00D9FF;"></i>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-card border border-gray-800 rounded-xl p-8 text-center card-hover">
+                    <div class="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-5">
+                        <i class="fa fa-shield text-primary text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-3">Transaksi Aman</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">Dana ditahan sistem sampai barang diterima. Uang kembali jika penjual tidak mengirim.</p>
+                </div>
+                <div class="bg-card border border-gray-800 rounded-xl p-8 text-center card-hover">
+                    <div class="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-5">
+                        <i class="fa fa-bolt text-primary text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-3">Pengiriman Instan</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">Sebagian besar pesanan diproses dalam hitungan menit, 24 jam non-stop.</p>
+                </div>
+                <div class="bg-card border border-gray-800 rounded-xl p-8 text-center card-hover">
+                    <div class="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-5">
+                        <i class="fa fa-check-circle text-primary text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-3">Penjual Terverifikasi</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">Setiap
+penjual sudah melalui proses verifikasi ketat sehingga kamu bisa berbelanja dengan tenang.</p>
+                </div>
             </div>
-            <h3 style="font-size: 1.1rem; margin-bottom: 8px;">Instan & Cepat</h3>
-            <p style="color: #94A3B8; font-size: 0.95rem;">Pesanan diproses dalam hitungan menit</p>
         </div>
-        <div class="card" style="padding: 30px; text-align: center;">
-            <div style="width: 60px; height: 60px; border-radius: 50%; background: rgba(0,21
-        </div>
-        <div class="card" style="padding: 30px; text-align: center;">
-            <div style="width: 60px; height: 60px; border-radius: 50%; background: rgba(0,217,255,0.1); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
-                <i class="fa fa-check-circle" style="font-size: 24px; color: #00D9FF;"></i>
-            </div>
-            <h3 style="font-size: 1.1rem; margin-bottom: 8px;">Penjual Terverifikasi</h3>
-            <p style="color: #94A3B8; font-size: 0.95rem;">Semua penjual sudah diverifikasi tim kami</p>
-        </div>
-    </div>
-</section>
+    </section>
+</main>
 
 <!-- Footer -->
-<footer style="background: #1E293B; border-top: 1px solid #334155; padding: 50px 20px 30px; margin-top: 60px;">
-    <div style="max-width: 1200px; margin: 0 auto;">
-        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px;">
+<footer class="bg-card border-t border-gray-800 pt-16 pb-8">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
             <div>
-                <h3 class="text-gradient" style="font-size: 1.4rem; font-weight: 800; margin-bottom: 16px;">✨ KAZUKI STORE</h3>
-                <p style="color: #94A3B8; font-size: 0.9rem; line-height: 1.6;">Marketplace gaming terpercaya. Beli & jual akun, item, dan mata uang game dengan aman.</p>
-                <div style="display: flex; gap: 12px; margin-top: 16px;">
-                    <a href="#" style="color: #94A3B8; font-size: 1.2rem;"><i class="fa fa-discord"></i></a>
-                    <a href="#" style="color: #94A3B8; font-size: 1.2rem;"><i class="fa fa-instagram"></i></a>
-                    <a href="#" style="color: #94A3B8; font-size: 1.2rem;"><i class="fa fa-whatsapp"></i></a>
+                <h3 class="text-xl font-bold mb-4">
+                    <span class="text-gradient">KAZUKI STORE</span>
+                </h3>
+                <p class="text-gray-400 text-sm leading-relaxed mb-6">
+                    Marketplace gaming terpercaya untuk beli dan jual akun, item, dan mata uang game. Transaksi aman, cepat, dan terpercaya.
+                </p>
+                <div class="flex gap-4">
+                    <a href="#" class="w-9 h-9 rounded-full bg-card-light flex items-center justify-center text-gray-400 hover:text-primary hover:bg-primary/10 transition-colors">
+                        <i class="fa fa-instagram"></i>
+                    </a>
+                    <a href="#" class="w-9 h-9 rounded-full bg-card-light flex items-center justify-center text-gray-400 hover:text-primary hover:bg-primary/10 transition-colors">
+                        <i class="fa fa-discord"></i>
+                    </a>
+                    <a href="#" class="w-9 h-9 rounded-full bg-card-light flex items-center justify-center text-gray-400 hover:text-primary hover:bg-primary/10 transition-colors">
+                        <i class="fa fa-whatsapp"></i>
+                    </a>
                 </div>
             </div>
+
             <div>
-                <h4 style="font-weight: 600; margin-bottom: 16px;">Tautan</h4>
-                <ul style="list-style: none; padding: 0; margin: 0;">
-                    <li style="margin-bottom: 8px;"><a href="#" style="color: #94A3B8; text-decoration: none; font-size: 0.9rem;">Beranda</a></li>
-                    <li style="margin-bottom: 8px;"><a href="#" style="color: #94A3B8; text-decoration: none; font-size: 0.9rem;">Produk</a></li>
-                    <li style="margin-bottom: 8px;"><a href="#" style="color: #94A3B8; text-decoration: none; font-size: 0.9rem;">Tentang Kami</a></li>
-                    <li style="margin-bottom: 8px;"><a href="#" style="color: #94A3B8; text-decoration: none; font-size: 0.9rem;">Kontak</a></li>
+                <h4 class="font-semibold mb-4">Tautan Cepat</h4>
+                <ul class="space-y-2">
+                    <li><a href="#" class="text-gray-400 text-sm hover:text-primary transition-colors">Beranda</a></li>
+                    <li><a href="#" class="text-gray-400 text-sm hover:text-primary transition-colors">Produk</a></li>
+                    <li><a href="#" class="text-gray-400 text-sm hover:text-primary transition-colors">Tentang Kami</a></li>
+                    <li><a href="#" class="text-gray-400 text-sm hover:text-primary transition-colors">Kontak</a></li>
                 </ul>
             </div>
+
             <div>
-                <h4 style="font-weight: 600; margin-bottom: 16px;">Bantuan</h4>
-                <ul style="list-style: none; padding: 0; margin: 0;">
-                    <li style="margin-bottom: 8px;"><a href="#" style="color: #94A3B8; text-decoration: none; font-size: 0.9rem;">Cara Berbelanja</a></li>
-                    <li style="margin-bottom: 8px;"><a href="#" style="color: #94A3B8; text-decoration: none; font-size: 0.9rem;">Syarat & Ketentuan</a></li>
-                    <li style="margin-bottom: 8px;"><a href="#" style="color: #94A3B8; text-decoration: none; font-size: 0.9rem;">Kebijakan Pengembalian</a></li>
-                    <li style="margin-bottom: 8px;"><a href="#" style="color: #94A3B8; text-decoration: none; font-size: 0.9rem;">FAQ</a></li>
+                <h4 class="font-semibold mb-4">Bantuan</h4>
+                <ul class="space-y-2">
+                    <li><a href="#" class="text-gray-400 text-sm hover:text-primary transition-colors">Cara Berbelanja</a></li>
+                    <li><a href="#" class="text-gray-400 text-sm hover:text-primary transition-colors">Syarat & Ketentuan</a></li>
+                    <li><a href="#" class="text-gray-400 text-sm hover:text-primary transition-colors">Kebijakan Pengembalian</a></li>
+                    <li><a href="#" class="text-gray-400 text-sm hover:text-primary transition-colors">FAQ</a></li>
                 </ul>
             </div>
+
             <div>
-                <h4 style="font-weight: 600; margin-bottom: 16px;">Kontak</h4>
-                <ul style="list-style: none; padding: 0; margin: 0;">
-                    <li style="margin-bottom: 8px; color: #94A3B8; font-size: 0.9rem;"><i class="fa fa-envelope" style="margin-right: 8px;"></i> support@kazukistore.my.id</li>
-                    <li style="margin-bottom: 8px; color: #94A3B8; font-size: 0.9rem;"><i class="fa fa-whatsapp" style="margin-right: 8px;"></i> +62 8xx-xxxx-xxxx</li>
+                <h4 class="font-semibold mb-4">Hubungi Kami</h4>
+                <ul class="space-y-3 text-gray-400 text-sm">
+                    <li class="flex items-start gap-3">
+                        <i class="fa fa-envelope-o mt-1 text-primary"></i>
+                        <span>support@kazukistore.my.id</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <i class="fa fa-whatsapp mt-1 text-primary"></i>
+                        <span>+62 8xx-xxxx-xxxx</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <i class="fa fa-clock-o mt-1 text-primary"></i>
+                        <span>Layanan 24 Jam</span>
+                    </li>
                 </ul>
             </div>
         </div>
-        <div style="border-top: 1px solid #334155; margin-top: 40px; padding-top: 24px; text-align: center; color: #64748B; font-size: 0.85rem;">
-            &copy; 2026 Kazuki Store. All rights reserved.
+
+        <div class="border-t border-gray-800 pt-8 text-center text-gray-500 text-sm">
+            <p>&copy; 2026 Kazuki Store. Semua Hak Dilindungi.</p>
         </div>
     </div>
 </footer>
 
 <!-- Modal -->
-<div id="modalWrapper" class="hidden">
-    <div class="modal-backdrop" onclick="tutupModal()"></div>
-    <div class="modal-container">
-        <div class="modal-content">
-            <button onclick="tutupModal()" style="position: absolute; top: 20px; right: 20px; background: none; border: none; color: #94A3B8; font-size: 1.2rem; cursor: pointer;">
+<div id="modalOverlay" class="fixed inset-0 z-[100] hidden">
+    <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" onclick="closeModal()"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4">
+        <div id="modalBox" class="bg-card border border-gray-800 rounded-2xl p-6 w-full max-w-md relative z-10">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white">
                 <i class="fa fa-times"></i>
             </button>
 
-            <div id="alertBox" style="background: rgba(250, 204, 21, 0.1); border: 1px solid #facc15; color: #facc15; padding: 10px 14px; border-radius: 8px; font-size: 0.9rem; margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
+            <div id="alertBox" class="hidden bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 text-sm p-3 rounded-lg mb-4 flex items-center gap-2">
                 <i class="fa fa-exclamation-triangle"></i>
-                <span id="alertText">Silakan login terlebih dahulu</span>
+                <span id="alertText"></span>
             </div>
 
-            <h2 id="modalTitle" style="font-size: 1.5rem; font-weight: 700; text-align: center; margin-bottom: 8px;">Selamat Datang Kembali</h2>
-            <p id="modalSubtitle" style="color: #94A3B8; text-align: center; margin-bottom: 24px;">Masuk ke akunmu untuk melanjutkan</p>
+            <h2 id="modalTitle" class="text-xl font-bold text-center mb-2">Masuk ke Akun</h2>
+            <p id="modalSubtitle" class="text-gray-400 text-sm text-center mb-6">Selamat datang kembali! Silakan masuk ke akunmu</p>
 
+            <!-- Login Form -->
             <div id="loginForm">
-                <button style="width: 100%; background: #1E293B; border: 1px solid #334155; border-radius: 10px; padding: 12px; color: white; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px; cursor: pointer;">
-                    <span style="font-size: 1.2rem;">☘️</span> Masuk dengan Google
+                <button class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-card-light border border-gray-700 text-sm mb-3 hover:border-primary/50 transition-colors">
+                    <span>🌱</span> Masuk dengan Google
                 </button>
-                <button style="width: 100%; background: #1E293B; border: 1px solid #334155; border-radius: 10px; padding: 12px; color: white; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px; cursor: pointer;">
-                    <span style="font-size: 1.2rem;">🌱</span> Masuk dengan Facebook
+                <button class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-card-light border border-gray-700 text-sm mb-3 hover:border-primary/50 transition-colors">
+                    <span>🍂</span> Masuk dengan Facebook
                 </button>
-                <button style="width: 100%; background: #1E293B; border: 1px solid #334155; border-radius: 10px; padding: 12px; color: white; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 24px; cursor: pointer;">
-                    <span style="font-size: 1.2rem;">🍂</span> Masuk dengan Discord
+                <button class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-card-light border border-gray-700 text-sm mb-5 hover:border-primary/50 transition-colors">
+                    <span>☘️</span> Masuk dengan Discord
                 </button>
 
-                <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px;">
-                    <div style="flex: 1; height: 1px; background: #334155;"></div>
-                    <span style="color: #64748B; font-size: 0.9rem;">atau</span>
-                    <div style="flex: 1; height: 1px; background: #334155;"></div>
+                <div class="flex items-center gap-3 mb-5">
+                    <div class="flex-1 h-px bg-gray-700"></div>
+                    <span class="text-gray-500 text-xs">atau</span>
+                    <div class="flex-1 h-px bg-gray-700"></div>
                 </div>
 
-                <div style="margin-bottom: 16px;">
-                    <label style="display: block; margin-bottom: 8px; font-size: 0.95rem;">Email</label>
-                    <input type="email" id="inputEmail" class="input-field" placeholder="email@contoh.com">
-                </div>
-                <div style="margin-bottom: 24px;">
-                    <label style="display: block; margin-bottom: 8px; font-size: 0.95rem;">Kata Sandi</label>
-                    <input type="password" id="inputPassword" class="input-field" placeholder="Masukkan kata sandi">
+                <div class="space-y-4 mb-5">
+                    <div>
+                        <label class="block text-sm font-medium mb-1.5">Email</label>
+                        <input type="email" id="inputEmail" placeholder="email@contoh.com" class="w-full px-4 py-2.5 rounded-lg bg-darker border border-gray-700 text-sm focus:outline-none focus:border-primary">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1.5">Kata Sandi</label>
+                        <input type="password" id="inputPassword" placeholder="Masukkan kata sandi" class="w-full px-4 py-2.5 rounded-lg bg-darker border border-gray-700 text-sm focus:outline-none focus:border-primary">
+                    </div>
                 </div>
 
-                <button onclick="prosesLogin()" class="btn-primary" style="width: 100%; padding: 12px; font-size: 1rem;">Masuk</button>
-                <p style="text-align: center; margin-top: 16px; font-size: 0.9rem; color: #94A3B8;">
-                    Belum punya akun? <a href="#" onclick="gantiModeModal('daftar')" style="color: #00D9FF; text-decoration: none;">Daftar di sini</a>
+                <button onclick="handleLogin()" class="w-full py-2.5 bg-gradient-to-r from-primary to-blue-500 text-dark font-semibold rounded-lg hover:opacity-90 transition-opacity">
+                    Masuk
+                </button>
+                <p class="text-center text-sm text-gray-400 mt-4">
+                    Belum punya akun? <a href="#" onclick="switchModalForm('register')" class="text-primary hover:underline">Daftar sekarang</a>
                 </p>
             </div>
 
+            <!-- Register Form -->
             <div id="registerForm" class="hidden">
-                <div style="margin-bottom: 16px;">
-                    <label style="display: block; margin-bottom: 8px; font-size: 0.95rem;">Nama Lengkap</label>
-                    <input type="text" id="inputNama" class="input-field" placeholder="Masukkan namamu">
-                </div>
-                <div style="margin-bottom: 16px;">
-                    <label style="display: block; margin-bottom: 8px; font-size: 0.95rem;">Email</label>
-                    <input type="email" id="inputEmailReg" class="input-field" placeholder="email@contoh.com">
-                </div>
-                <div style="margin-bottom: 16px;">
-                    <label style="display: block; margin-bottom: 8px; font-size: 0.95rem;">Kata Sandi</label>
-                    <input type="password" id="inputPasswordReg" class="input-field" placeholder="Buat kata sandi">
-                </div>
-                <div style="margin-bottom: 24px;">
-                    <label style="display: block; margin-bottom: 8px; font-size: 0.95rem;">Konfirmasi Kata Sandi</label>
-                    <input type="password" id="inputPasswordReg2" class="input-field" placeholder="Ulangi kata sandi">
+                <div class="space-y-4 mb-5">
+                    <div>
+                        <label class="block text-sm font-medium mb-1.5">Nama Lengkap</label>
+                        <input type="text" id="inputName" placeholder="Masukkan namamu" class="w-full px-4 py-2.5 rounded-lg bg-darker border border-gray-700 text-sm focus:outline-none focus:border-primary">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1.5">Email</label>
+                        <input type="email" id="inputEmailReg" placeholder="email@contoh.com" class="w-full px-4 py-2.5 rounded-lg bg-darker border border-gray-700 text-sm focus:outline-none focus:border-primary">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1.5">Kata Sandi</label>
+                        <input type="password" id="inputPasswordReg" placeholder="Buat kata sandi" class="w-full px-4 py-2.5 rounded-lg bg-darker border border-gray-700 text-sm focus:outline-none focus:border-primary">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1.5">Konfirmasi Kata Sandi</label>
+                        <input type="password" id="inputPasswordReg2" placeholder="Ulangi kata sandi" class="w-full px-4 py-2.5 rounded-lg bg-darker border border-gray-700 text-sm focus:outline-none focus:border-primary">
+                    </div>
                 </div>
 
-                <button onclick="prosesDaftar()" class="btn-primary" style="width: 100%; padding: 12px; font-size: 1rem;">Daftar</button>
-                <p style="text-align: center; margin-top: 16px; font-size: 0.9rem; color: #94A3B8;">
-                    Sudah punya akun? <a href="#" onclick="gantiModeModal('login')" style="color: #00D9FF; text-decoration: none;">Masuk di sini</a>
+                <button onclick="handleRegister()" class="w-full py-2.5 bg-gradient-to-r from-primary to-blue-500 text-dark font-semibold rounded-lg hover:opacity-90 transition-opacity">
+                    Daftar
+                </button>
+                <p class="text-center text-sm text-gray-400 mt-4">
+                    Sudah punya akun? <a href="#" onclick="switchModalForm('login')" class="text-primary hover:underline">Masuk di sini</a>
                 </p>
             </div>
         </div>
@@ -469,47 +416,54 @@
 </div>
 
 <!-- Toast -->
-<div id="toast" style="position: fixed; bottom: 30px; right: 20px; background: #1E293B; border: 1px solid #00D9FF; color: white; padding: 14px 20px; border-radius: 10px; box-shadow: 0 4px 20px rgba(0, 217, 255, 0.15); z-index: 100; opacity: 0; transform: translateY(20px); transition: all 0.3s ease; pointer-events: none;">
-    <span id="toastText">Pesanan berhasil!</span>
+<div id="toast" class="fixed bottom-6 right-6 z-[200] bg-card border border-primary text-white px-5 py-3 rounded-xl shadow-2xl transition-all duration-300 opacity-0 translate-y-4 pointer-events-none">
+    <span id="toastMessage"></span>
 </div>
 
 <script>
-const modalWrapper = document.getElementById('modalWrapper');
+// State
+let currentUser = JSON.parse(localStorage.getItem('kazuki_user')) || null;
+
+// DOM Elements
+const modalOverlay = document.getElementById('modalOverlay');
 const loginForm = document.getElementById('loginForm');
 const registerForm = document.getElementById('registerForm');
 const modalTitle = document.getElementById('modalTitle');
 const modalSubtitle = document.getElementById('modalSubtitle');
 const alertBox = document.getElementById('alertBox');
 const alertText = document.getElementById('alertText');
-const btnMasuk = document.getElementById('btnMasuk');
-const btnDaftar = document.getElementById('btnDaftar');
+const guestMenu = document.getElementById('guestMenu');
 const userMenu = document.getElementById('userMenu');
 const userName = document.getElementById('userName');
-const userAvatar = document.getElementById('userAvatar');
+const userInitial = document.getElementById('userInitial');
+const toast = document.getElementById('toast');
+const toastMessage = document.getElementById('toastMessage');
 
-function bukaModal(mode, pesan = '') {
-    modalWrapper.classList.remove('hidden');
-    gantiModeModal(mode);
-    if (pesan) {
-        alertBox.style.display = 'flex';
-        alertText.textContent = pesan;
-    } else {
-        alertBox.style.display = 'none';
-    }
+// Init
+updateAuthUI();
+
+// Modal Functions
+function openModal(type, alertMsg = '') {
+    modalOverlay.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+    switchModalForm(type);
+    if (alertMsg) showAlert(alertMsg);
 }
 
-function tutupModal() {
-    modalWrapper.classList.add('hidden');
+function closeModal() {
+    modalOverlay.classList.add('hidden');
+    document.body.style.overflow = '';
+    hideAlert();
     resetForm();
 }
 
-function gantiModeModal(mode) {
+function switchModalForm(type) {
     resetForm();
-    if (mode === 'login') {
+    if (type === 'login') {
         loginForm.classList.remove('hidden');
         registerForm.classList.add('hidden');
-        modalTitle.textContent = 'Selamat Datang Kembali';
-        modalSubtitle.textContent = 'Masuk ke akunmu untuk melanjutkan';
+        modalTitle.textContent = 'Masuk ke Akun';
+        modalSubtitle.textContent = 'Selamat datang kembali! Silakan masuk ke akunmu';
     } else {
         loginForm.classList.add('hidden');
         registerForm.classList.remove('hidden');
@@ -519,102 +473,105 @@ function gantiModeModal(mode) {
 }
 
 function resetForm() {
-    alertBox.style.display = 'none';
+    hideAlert();
     document.getElementById('inputEmail').value = '';
     document.getElementById('inputPassword').value = '';
-    document.getElementById('inputNama').value = '';
+    document.getElementById('inputName').value = '';
     document.getElementById('inputEmailReg').value = '';
     document.getElementById('inputPasswordReg').value = '';
     document.getElementById('inputPasswordReg2').value = '';
 }
 
-function prosesLogin() {
-    const email = document.getElementById('inputEmail').value;
-    const password = document.getElementById('inputPassword').value;
-    
-    if (!email || !password) {
-        alertBox.style.display = 'flex';
-        alertText.textContent = 'Lengkapi semua data terlebih dahulu';
-        return;
-    }
-    
-    const nama = email.split('@')[0];
-    localStorage.setItem('user', JSON.stringify({ nama, email }));
-    masukSukses(nama);
+function showAlert(msg) {
+    alertText.textContent = msg;
+    alertBox.classList.remove('hidden');
 }
 
-function prosesDaftar() {
-    const nama = document.getElementById('inputNama').value;
-    const email = document.getElementById('inputEmailReg').value;
+function hideAlert() {
+    alertBox.classList.add('hidden');
+}
+
+// Auth Functions
+function handleLogin() {
+    const email = document.getElementById('inputEmail').value.trim();
+    const password = document.getElementById('inputPassword').value;
+
+    if (!email || !password) {
+        showAlert('Harap lengkapi semua data');
+        return;
+    }
+
+    const name = email.split('@')[0];
+    currentUser = { name, email };
+    localStorage.setItem('kazuki_user', JSON.stringify(currentUser));
+    updateAuthUI();
+    closeModal();
+    showToast(`Berhasil masuk! Selamat datang, ${name} 🎉`);
+}
+
+function handleRegister() {
+    const name = document.getElementById('inputName').value.trim();
+    const email = document.getElementById('inputEmailReg').value.trim();
     const pass1 = document.getElementById('inputPasswordReg').value;
     const pass2 = document.getElementById('inputPasswordReg2').value;
-    
-    if (!nama || !email || !pass1 || !pass2) {
-        alertBox.style.display = 'flex';
-        alertText.textContent = 'Lengkapi semua data terlebih dahulu';
+
+    if (!name || !email || !pass1 || !pass2) {
+        showAlert('Harap lengkapi semua data');
         return;
     }
-    
+
     if (pass1 !== pass2) {
-        alertBox.style.display = 'flex';
-        alertText.textContent = 'Kata sandi tidak cocok';
+        showAlert('Kata sandi tidak cocok');
         return;
     }
+
+    currentUser = { name, email };
+    localStorage.setItem('kazuki_user', JSON.stringify(currentUser));
+    updateAuthUI();
+    closeModal();
+    showToast(`Berhasil daftar! Selamat datang, ${name} 🎉`);
+}
+
+function logout() {
+    localStorage.removeItem('kazuki_user');
+    currentUser = null;
+    updateAuthUI();
+    showToast('Berhasil keluar. Sampai jumpa! 👋');
+}
+
+function updateAuthUI() {
+    if (currentUser) {
+        guestMenu.classList.add('hidden');
+        userMenu.classList.remove('hidden');
+        userMenu.style.display = 'flex';
+        userName.textContent = currentUser.name;
+        userInitial.textContent = currentUser.name.charAt(0).toUpperCase();
+    } else {
+        guestMenu.classList.remove('hidden');
+        userMenu.classList.add('hidden');
+    }
+}
+
+// Buy Handler
+function handleBuy(productName, price) {
+    if (!currentUser) {
+        openModal('login', '⚠️ Silakan login terlebih dahulu untuk berbelanja');
+        return;
+    }
+    showToast(`✅ ${productName} — Rp ${price.toLocaleString('id-ID')}`);
+}
+
+// Toast
+function showToast(msg) {
+    toastMessage.textContent = msg;
+    toast.classList.remove('opacity-0', 'translate-y-4');
+    toast.classList.add('opacity-100', 'translate-y-0');
     
-    localStorage.setItem('user', JSON.stringify({ nama, email }));
-    masukSukses(nama);
-}
-
-function masukSukses(nama) {
-    tutupModal();
-    updateUI(nama);
-    tampilToast('Berhasil masuk, selamat datang ' + nama + '! 🎉');
-}
-
-function updateUI(nama) {
-    userName.textContent = nama;
-    userAvatar.textContent = nama.charAt(0).toUpperCase();
-    userMenu.classList.add('show');
-    btnMasuk.style.display = 'none';
-    btnDaftar.style.display = 'none';
-}
-
-function keluar() {
-    localStorage.removeItem('user');
-    userMenu.classList.remove('show');
-    btnMasuk.style.display = 'block';
-    btnDaftar.style.display = 'block';
-    tampilToast('Berhasil keluar, sampai jumpa! 👋');
-}
-
-function beli(namaProduk, harga) {
-    const user = localStorage.getItem('user');
-    if (!user) {
-        bukaModal('login', '⚠️ Silakan login terlebih dahulu untuk berbelanja');
-        return;
-    }
-    tampilToast(`✅ ${namaProduk} — Rp ${harga.toLocaleString('id-ID')}`);
-}
-
-function tampilToast(pesan) {
-    const toast = document.getElementById('toast');
-    document.getElementById('toastText').textContent = pesan;
-    toast.style.opacity = '1';
-    toast.style.transform = 'translateY(0)';
     setTimeout(() => {
-        toast.style.opacity = '0';
-        toast.style.transform = 'translateY(20px)';
+        toast.classList.add('opacity-0', 'translate-y-4');
+        toast.classList.remove('opacity-100', 'translate-y-0');
     }, 3000);
 }
-
-// Cek sesi saat halaman dimuat
-window.onload = function() {
-    const user = localStorage.getItem('user');
-    if (user) {
-        const data = JSON.parse(user);
-        updateUI(data.nama);
-    }
-};
 </script>
 
 </body>
