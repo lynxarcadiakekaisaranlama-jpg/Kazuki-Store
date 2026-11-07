@@ -5,14 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KAZUKI STORE | Marketplace Gaming</title>
     
-    <!-- External Resources -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    
-    <!-- FIREBASE API -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     
     <script>
         tailwind.config = {
@@ -25,23 +19,15 @@
                         darker: '#03050F',
                         card: '#0F172A',
                         'card-light': '#1E293B',
-                        success: '#10B981',
-                        warning: '#F59E0B',
-                        danger: '#EF4444',
                     },
                     animation: {
                         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                         'float': 'float 6s ease-in-out infinite',
-                        'glow': 'glow 2s ease-in-out infinite alternate',
                     },
                     keyframes: {
                         float: {
                             '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-10px)' },
-                        },
-                        glow: {
-                            '0%': { boxShadow: '0 0 20px rgba(0, 217, 255, 0.3)' },
-                            '100%': { boxShadow: '0 0 40px rgba(0, 217, 255, 0.6)' },
+                            '50%': { transform: 'translateY(-12px)' },
                         }
                     }
                 }
@@ -49,1137 +35,556 @@
         }
     </script>
     
-    <style type="text/tailwindcss">
-        @layer utilities {
-            .text-gradient {
-                background-clip: text;
-                -webkit-background-clip: text;
-                color: transparent;
-                background-image: linear-gradient(90deg, #00D9FF, #60A5FA);
-            }
-            .bg-glass {
-                background: rgba(15, 23, 42, 0.75);
-                backdrop-filter: blur(16px);
-            }
-            .card-hover {
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            }
-            .card-hover:hover {
-                transform: translateY(-6px);
-                box-shadow: 0 25px 50px rgba(0, 217, 255, 0.12);
-                border-color: rgba(0, 217, 255, 0.3);
-            }
-            .content-visibility-auto {
-                content-visibility: auto;
-            }
+    <style>
+        * { scroll-behavior: smooth; }
+        
+        .text-gradient {
+            background: linear-gradient(90deg, #00D9FF, #60A5FA);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
         
-        /* INTRO ANIMATION */
         .intro-screen {
             position: fixed;
             inset: 0;
             z-index: 9999;
             background: linear-gradient(135deg, #03050F 0%, #050816 100%);
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            flex-direction: column;
-            overflow: hidden;
+            transition: opacity 0.6s ease-out, visibility 0.6s ease-out;
         }
-        
+        .intro-hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
         .intro-logo {
             font-size: clamp(2.5rem, 8vw, 5rem);
             font-weight: 800;
             opacity: 0;
             transform: translateY(30px);
-            animation: logoFadeIn 1.5s ease-out forwards;
+            animation: logoIn 1.5s ease-out forwards;
         }
-        
         .intro-line {
             width: 0;
             height: 3px;
             background: linear-gradient(90deg, #00D9FF, #60A5FA);
             margin-top: 1rem;
-            animation: lineExpand 1.2s ease-out 0.8s forwards;
+            animation: lineIn 1.2s ease-out 0.8s forwards;
         }
-        
         .intro-tagline {
             opacity: 0;
             margin-top: 1rem;
             color: #94A3B8;
-            font-size: 1rem;
+            font-size: 0.9rem;
             letter-spacing: 0.3em;
             text-transform: uppercase;
             animation: fadeIn 1s ease-out 1.5s forwards;
         }
-        
-        .intro-hide {
-            animation: introFadeOut 0.8s ease-in forwards;
+        .intro-dot {
+            width: 10px;
+            height: 10px;
+            background: #00D9FF;
+            border-radius: 50%;
+            animation: blink 1s ease-out 2s infinite;
         }
         
-        @keyframes logoFadeIn {
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes lineExpand {
-            to { width: 280px; }
-        }
-        @keyframes fadeIn {
-            to { opacity: 1; }
-        }
-        @keyframes introFadeOut {
-            to { opacity: 0; visibility: hidden; }
+        @keyframes logoIn { to { opacity:1; transform:translateY(0); } }
+        @keyframes lineIn { to { width: 280px; } }
+        @keyframes fadeIn { to { opacity:1; } }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
         }
         
-        /* Page Transitions */
         .page-content {
             opacity: 0;
             transform: translateY(20px);
-            transition: all 0.8s ease-out;
+            transition: all 0.7s ease-out;
         }
         .page-visible {
             opacity: 1;
             transform: translateY(0);
         }
-        
-        /* Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #03050F; }
-        ::-webkit-scrollbar-thumb { background: #1E293B; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #00D9FF; }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 217, 255, 0.1);
+            border-color: rgba(0, 217, 255, 0.3);
+        }
+        .toast {
+            transition: all 0.3s ease;
+        }
+        .toast-show {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+        }
     </style>
 </head>
-<body class="bg-darker text-gray-100 min-h-screen font-sans antialiased">
+<body class="bg-darker text-gray-100 min-h-screen font-sans">
 
-<!-- 🚀 INTRO SCREEN KEREN -->
-<div id="introScreen" class="intro-screen">
-    <div class="absolute inset-0 overflow-hidden">
-        <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl animate-pulse-slow"></div>
-        <div class="absolute bottom-1/4 right-1/4 w-80 h-80 bg-secondary/5 rounded-full blur-3xl animate-pulse-slow" style="animation-delay: 1s;"></div>
-    </div>
-    
+<!-- 🚀 INTRO SCREEN -->
+<div id="intro" class="intro-screen">
+    <div class="absolute w-80 h-80 bg-primary/5 rounded-full blur-3xl top-1/4 left-1/4 animate-pulse-slow"></div>
     <h1 class="intro-logo text-gradient">KAZUKI STORE</h1>
     <div class="intro-line"></div>
-    <p class="intro-tagline">Marketplace Gaming • Since 2024</p>
-    
-    <div class="mt-12 flex items-center gap-2 text-gray-500 text-sm opacity-0" style="animation: fadeIn 1s ease-out 2s forwards;">
-        <div class="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
-        <span>Menyiapkan pengalaman terbaik...</span>
+    <p class="intro-tagline">Marketplace Gaming Indonesia</p>
+    <div class="mt-10 flex items-center gap-2 text-gray-500 text-sm opacity-0" style="animation: fadeIn 1s ease-out 2.2s forwards;">
+        <div class="intro-dot"></div>
+        <span>Siap untuk kamu</span>
     </div>
 </div>
 
-<!-- Main Content -->
-<div id="mainContent" class="page-content">
+<!-- MAIN CONTENT -->
+<div id="main" class="page-content">
 
 <!-- Navbar -->
-<header class="sticky top-0 z-50 border-b border-gray-800/80 bg-glass">
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between h-16 md:h-20">
-            <a href="#" class="text-xl font-bold tracking-tight" onclick="showSection('home')">
-                <span class="text-gradient">KAZUKI STORE</span>
-            </a>
-
-            <nav class="hidden md:flex items-center space-x-8">
-                <a href="#" onclick="showSection('home')" class="text-gray-300 hover:text-primary transition-colors relative group">
-                    Beranda
-                    <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
-                </a>
-                <a href="#" onclick="showSection('products')" class="text-gray-300 hover:text-primary transition-colors relative group">
-                    Produk
-                    <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
-                </a>
-                <a href="#" onclick="showSection('sell')" class="text-gray-300 hover:text-primary transition-colors relative group">
-                    Jual
-                    <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
-                </a>
-                <a href="#" onclick="showSection('transactions')" class="text-gray-300 hover:text-primary transition-colors relative group">
-                    Transaksi
-                    <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
-                </a>
-            </nav>
-
-            <div class="flex items-center gap-3">
-                <button onclick="toggleSearch()" class="text-gray-400 hover:text-primary transition-colors text-lg">
-                    <i class="fa fa-search"></i>
-                </button>
-
-                <div id="userMenu" class="hidden items-center gap-2 relative">
-                    <div class="w-9 h-9 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center text-dark font-bold cursor-pointer shadow-lg animate-glow" onclick="toggleUserDropdown()">
-                        <span id="userInitial">K</span>
-                    </div>
-                    <span class="hidden sm:inline text-sm font-medium" id="userName">Kazuki</span>
-                    <div id="userDropdown" class="hidden absolute top-12 right-0 mt-2 w-52 bg-card border border-gray-700 rounded-xl shadow-2xl p-3 z-50">
-                        <a href="#" onclick="showSection('my-products')" class="flex items-center gap-2 py-2.5 px-2 text-sm text-gray-300 hover:text-primary hover:bg-primary/5 rounded-lg">
-                            <i class="fa fa-box w-4 text-center"></i> Produk Saya
-                        </a>
-                        <a href="#" onclick="showSection('transactions')" class="flex items-center gap-2 py-2.5 px-2 text-sm text-gray-300 hover:text-primary hover:bg-primary/5 rounded-lg">
-                            <i class="fa fa-list w-4 text-center"></i> Pesanan Saya
-                        </a>
-                        <hr class="border-gray-700 my-2">
-                        <a href="#" onclick="logout()" class="flex items-center gap-2 py-2.5 px-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/5 rounded-lg">
-                            <i class="fa fa-sign-out w-4 text-center"></i> Keluar
-                        </a>
-                    </div>
-                </div>
-
-                <div id="guestMenu" class="flex items-center gap-2">
-                    <button onclick="openModal('login')" class="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white transition-colors">Masuk</button>
-                    <button onclick="openModal('register')" class="px-4 py-2 text-sm font-medium bg-gradient-to-r from-primary to-secondary text-dark rounded-lg hover:scale-105 transition-transform shadow-lg shadow-primary/20">Daftar</button>
-                </div>
-
-                <button class="md:hidden text-xl ml-2 text-gray-300" onclick="toggleMobileMenu()">
-                    <i class="fa fa-bars"></i>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <div id="searchBar" class="hidden border-t border-gray-800 px-4 py-3 animate-pulse-slow">
-        <div class="container mx-auto">
-            <div class="relative">
-                <input type="text" id="searchInput" placeholder="Cari produk..." class="w-full px-4 py-2.5 pl-10 rounded-lg bg-darker border border-gray-700 focus:border-primary focus:outline-none text-sm transition-colors">
-                <i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"></i>
-            </div>
+<header class="sticky top-0 z-50 border-b border-gray-800/80 bg-darker/80 backdrop-blur-md">
+    <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+        <a href="#" onclick="showPage('home')" class="text-xl font-bold text-gradient">KAZUKI STORE</a>
+        
+        <nav class="hidden md:flex items-center gap-8">
+            <a href="#" onclick="showPage('home')" class="text-gray-300 hover:text-primary">Beranda</a>
+            <a href="#" onclick="showPage('produk')" class="text-gray-300 hover:text-primary">Produk</a>
+            <a href="#" onclick="showPage('jual')" class="text-gray-300 hover:text-primary">Jual</a>
+            <a href="#" onclick="showPage('tentang')" class="text-gray-300 hover:text-primary">Tentang</a>
+        </nav>
+        
+        <div class="flex items-center gap-3">
+            <button onclick="openLogin()" class="px-4 py-2 text-sm text-gray-300 hover:text-white">Masuk</button>
+            <button onclick="openLogin()" class="px-4 py-2 text-sm bg-gradient-to-r from-primary to-secondary text-dark font-semibold rounded-lg">Daftar</button>
+            <button class="md:hidden text-xl" onclick="toggleMenu()">
+                <i class="fa fa-bars"></i>
+            </button>
         </div>
     </div>
 </header>
 
 <!-- Mobile Menu -->
-<div id="mobileMenu" class="fixed inset-0 z-[90] hidden">
-    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="toggleMobileMenu()"></div>
-    <div class="absolute right-0 top-0 bottom-0 w-72 bg-card border-l border-gray-800 p-5 z-10">
+<div id="mobileMenu" class="fixed inset-0 z-[60] hidden">
+    <div class="absolute inset-0 bg-black/60" onclick="toggleMenu()"></div>
+    <div class="absolute right-0 top-0 bottom-0 w-64 bg-card p-5 border-l border-gray-800">
         <div class="flex justify-between items-center mb-8">
-            <span class="text-xl font-bold text-gradient">Menu</span>
-            <button onclick="toggleMobileMenu()" class="text-gray-400 hover:text-white">
-                <i class="fa fa-times"></i>
-            </button>
+            <span class="text-lg font-bold text-gradient">Menu</span>
+            <button onclick="toggleMenu()" class="text-gray-400"><i class="fa fa-times"></i></button>
         </div>
-        <nav class="space-y-2">
-            <a href="#" onclick="showSection('home'); toggleMobileMenu()" class="flex items-center gap-3 py-3 px-3 text-gray-300 hover:text-primary hover:bg-primary/5 rounded-lg">
-                <i class="fa fa-home w-5 text-center"></i> Beranda
-            </a>
-            <a href="#" onclick="showSection('products'); toggleMobileMenu()" class="flex items-center gap-3 py-3 px-3 text-gray-300 hover:text-primary hover:bg-primary/5 rounded-lg">
-                <i class="fa fa-shopping-bag w-5 text-center"></i> Produk
-            </a>
-            <a href="#" onclick="showSection('sell'); toggleMobileMenu()" class="flex items-center gap-3 py-3 px-3 text-gray-300 hover:text-primary hover:bg-primary/5 rounded-lg">
-                <i class="fa fa-plus-circle w-5 text-center"></i> Jual Produk
-            </a>
-            <a href="#" onclick="showSection('transactions'); toggleMobileMenu()" class="flex items-center gap-3 py-3 px-3 text-gray-300 hover:text-primary hover:bg-primary/5 rounded-lg">
-                <i class="fa fa-exchange w-5 text-center"></i> Transaksi
-            </a>
+        <nav class="space-y-4">
+            <a href="#" onclick="showPage('home'); toggleMenu()" class="block py-2 text-gray-300 hover:text-primary">Beranda</a>
+            <a href="#" onclick="showPage('produk'); toggleMenu()" class="block py-2 text-gray-300 hover:text-primary">Produk</a>
+            <a href="#" onclick="showPage('jual'); toggleMenu()" class="block py-2 text-gray-300 hover:text-primary">Jual Produk</a>
+            <a href="#" onclick="showPage('tentang'); toggleMenu()" class="block py-2 text-gray-300 hover:text-primary">Tentang</a>
         </nav>
     </div>
 </div>
 
-<main class="pt-4">
-    <!-- HOME SECTION -->
-    <section id="section-home" class="page-section">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid md:grid-cols-2 gap-12 items-center min-h-[calc(100vh-180px)] py-8">
-                <div class="space-y-6">
-                    <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium">
-                        <i class="fa fa-bolt"></i> Marketplace Premium Terpercaya
-                    </span>
-                    <h1 class="text-[clamp(2.2rem,5vw,4rem)] font-bold leading-tight">
-                        Trade Gaming Goods<br>
-                        <span class="text-gradient">Securely & Fast ⚡</span>
-                    </h1>
-                    <p class="text-gray-400 text-lg max-w-lg leading-relaxed">
-                        Beli & jual akun, mata uang, item, dan layanan game dengan sistem escrow aman. Dana terjamin, barang terverifikasi, pengiriman instan 24/7.
-                    </p>
-                    <div class="flex flex-wrap gap-4 pt-2">
-                        <button onclick="showSection('products')" class="px-8 py-3 bg-gradient-to-r from-primary to-secondary text-dark font-semibold rounded-lg hover:scale-105 transition-transform shadow-lg shadow-primary/20 flex items-center gap-2">
-                            <i class="fa fa-shopping-cart"></i> Mulai Belanja
-                        </button>
-                        <button onclick="showSection('sell')" class="px-8 py-3 bg-card-light border border-gray-700 text-white font-semibold rounded-lg hover:border-primary/50 hover:bg-primary/5 transition-all flex items-center gap-2">
-                            <i class="fa fa-rocket"></i> Mulai Jual
-                        </button>
-                    </div>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 pt-10">
-                        <div class="text-center md:text-left">
-                            <p class="text-2xl
-font-bold text-gradient" id="statProducts">250+</p>
-                            <p class="text-gray-500 text-sm">Produk</p>
-                        </div>
-                        <div class="text-center md:text-left">
-                            <p class="text-2xl font-bold text-gradient" id="statTransactions">5.000+</p>
-                            <p class="text-gray-500 text-sm">Transaksi</p>
-                        </div>
-                        <div class="text-center md:text-left">
-                            <p class="text-2xl font-bold text-gradient" id="statUsers">2.000+</p>
-                            <p class="text-gray-500 text-sm">Pengguna</p>
-                        </div>
-                        <div class="text-center md:text-left">
-                            <p class="text-2xl font-bold text-gradient" id="statSellers">200+</p>
-                            <p class="text-gray-500 text-sm">Penjual</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="relative">
-                    <div class="absolute inset-0 bg-primary/10 rounded-2xl blur-3xl animate-pulse-slow"></div>
-                    <div class="relative border border-gray-800 rounded-2xl p-3 bg-card animate-float">
-                        <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=600&h=400&fit=crop" alt="Gaming" class="w-full h-[320px] object-cover rounded-xl">
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Categories -->
-        <div class="bg-card/30 py-20">
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center mb-12">
-                    <h2 class="text-2xl md:text-3xl font-bold mb-3">Kategori Populer</h2>
-                    <p class="text-gray-400 max-w-xl mx-auto">Temukan apa yang kamu butuhkan dengan mudah dan cepat</p>
-                </div>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-5">
-                    <div onclick="filterByCategory('diamond')" class="bg-card border border-gray-800 rounded-xl p-6 text-center card-hover cursor-pointer group">
-                        <div class="text-3xl mb-3 group-hover:scale-110 transition-transform">💎</div>
-                        <h3 class="font-semibold mb-1">Diamond</h3>
-                        <p class="text-gray-500 text-sm">Top Up Instan</p>
-                    </div>
-                    <div onclick="filterByCategory('account')" class="bg-card border border-gray-800 rounded-xl p-6 text-center card-hover cursor-pointer group">
-                        <div class="text-3xl mb-3 group-hover:scale-110 transition-transform">🏆</div>
-                        <h3 class="font-semibold mb-1">Akun Game</h3>
-                        <p class="text-gray-500 text-sm">Terverifikasi</p>
-                    </div>
-                    <div onclick="filterByCategory('item')" class="bg-card border border-gray-800 rounded-xl p-6 text-center card-hover cursor-pointer group">
-                        <div class="text-3xl mb-3 group-hover:scale-110 transition-transform">🎁</div>
-                        <h3 class="font-semibold mb-1">Item & Skin</h3>
-                        <p class="text-gray-500 text-sm">Eksklusif</p>
-                    </div>
-                    <div onclick="filterByCategory('service')" class="bg-card border border-gray-800 rounded-xl p-6 text-center card-hover cursor-pointer group">
-                        <div class="text-3xl mb-3 group-hover:scale-110 transition-transform">⚡</div>
-                        <h3 class="font-semibold mb-1">Jasa</h3>
-                        <p class="text-gray-500 text-sm">Boosting & Joki</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Featured Products -->
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-20">
-            <div class="flex justify-between items-center mb-10">
-                <h2 class="text-2xl md:text-3xl font-bold">Produk Terbaru</h2>
-                <a href="#" onclick="showSection('products')" class="text-primary hover:underline flex items-center gap-1">
-                    Lihat Semua <i class="fa fa-arrow-right text-sm"></i>
-                </a>
-            </div>
-            <div id="featuredProducts" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="bg-card border border-gray-800 rounded-xl overflow-hidden card-hover">
-                    <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=400&h=250&fit=crop" class="w-full h-44 object-cover">
-                    <div class="p-5">
-                        <span class="text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded">💎 Diamond</span>
-                        <h3 class="font-semibold mt-2 mb-1">Diamond Mobile Legends</h3>
-                        <p class="text-gray-500 text-sm mb-4">Stok tersedia 24 jam, proses instan</p>
-                        <div class="flex justify-between items-center">
-                            <span class="text-lg font-bold text-primary">Rp 5.000</span>
-                            <button onclick="handleBuy('Diamond ML', 5000)" class="px-4 py-2 bg-primary/10 text-primary text-sm font-medium rounded-lg hover:bg-primary/20 transition-colors">Beli</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-card border border-gray-800 rounded-xl overflow-hidden card-hover">
-                    <img src="https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?w=400&h=250&fit=crop" class="w-full h-44 object-cover">
-                    <div class="p-5">
-                        <span class="text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded">🏆 Akun</span>
-                        <h3 class="font-semibold mt-2 mb-1">Akun Valorant Skin Banyak</h3>
-                        <p class="text-gray-500 text-sm mb-4">Semua data aman, transfer kepemilikan</p>
-                        <div class="flex justify-between items-center">
-                            <span class="text-lg font-bold text-primary">Rp 150.000</span>
-                            <button onclick="handleBuy('Akun Valorant', 150000)" class="px-4 py-2 bg-primary/10 text-primary text-sm font-medium rounded-lg hover:bg-primary/20 transition-colors">Beli</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-card border border-gray-800 rounded-xl overflow-hidden card-hover">
-                    <img src="https://images.unsplash.com/photo-1593305841991-05c22158a4c1?w=400&h=250&fit=crop" class="w-full h-44 object-cover">
-                    <div class="p-5">
-                        <span class="text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded">⚡ Jasa</span>
-                        <h3 class="font-semibold mt-2 mb-1">Jasa Boosting Rank</h3>
-                        <p class="text-gray-500 text-sm mb-4">Dikerjakan pro player, aman & cepat</p>
-                        <div class="flex justify-between items-center">
-                            <span class="text-lg font-bold text-primary">Rp 20.000</span>
-                            <button onclick="handleBuy('Jasa Boosting', 20000)" class="px-4 py-2 bg-primary/10 text-primary text-sm font-medium rounded-lg hover:bg-primary/20 transition-colors">Beli</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Why Us -->
-        <div class="bg-card/30 py-20">
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center mb-14">
-                    <h2 class="text-2xl md:text-3xl font-bold mb-4">Kenapa Pilih <span class="text-gradient">Kazuki Store?</span></h2>
-                    <p class="text-gray-400 max-w-xl mx-auto">Platform marketplace gaming paling terpercaya dengan sistem keamanan terbaik</p>
-                </div>
-                <div class="grid md:grid-cols-3 gap-8">
-                    <div class="bg-card border border-gray-800 rounded-xl p-8 text-center card-hover">
-                        <div class="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-5">
-                            <i class="fa fa-shield text-primary text-xl"></i>
-                        </div>
-                        <h3 class="text-lg font-semibold mb-3">Transaksi Aman</h3>
-                        <p class="text-gray-400 text-sm leading-relaxed">Dana ditahan sistem sampai barang diterima. Uang kembali jika penjual tidak mengirim.</p>
-                    </div>
-                    <div class="bg-card border border-gray-800 rounded-xl p-8 text-center card-hover">
-                        <div class="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-5">
-                            <i class="fa fa-bolt text-primary text-xl"></i>
-                        </div>
-                        <h3 class="text-lg font-semibold mb-3">Pengiriman Instan</h3>
-                        <p class="text-gray-400 text-sm leading-relaxed">Sebagian besar pesanan diproses dalam hitungan menit, layanan aktif 24 jam non-stop.</p>
-                    </div>
-                    <div class="bg-card border border-gray-800 rounded-xl p-8 text-center card-hover">
-                        <div class="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-5">
-                            <i class="fa fa-check-circle text-primary text-xl"></i>
-                        </div>
-                        <h3 class="text-lg font-semibold mb-3">Penjual Terverifikasi</h3>
-                        <p class="text-gray-400 text-sm leading-relaxed">Setiap penjual sudah melalui proses verifikasi ketat sehingga kamu bisa berbelanja dengan tenang.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- PRODUCTS SECTION -->
-    <section id="section-products" class="page-section hidden">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div class="mb-10">
-                <h2 class="text-3xl font-bold mb-2">Semua Produk</h2>
-                <p class="text-gray-400">Jelajahi ribuan produk game terbaik di Kazuki Store</p>
-            </div>
-            
-            <!-- Filters -->
-            <div class="bg-card border border-gray-800 rounded-xl p-5 mb-8">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <div>
-                        <label class="text-sm text-gray-400 mb-1 block">Kategori</label>
-                        <select id="filterCategory" class="w-full px-3 py-2 rounded-lg bg-darker border border-gray-700 text-sm focus:border-primary outline-none">
-                            <option value="">Semua Kategori</option>
-                            <option value="diamond">💎 Diamond</option>
-                            <option value="account">🏆 Akun Game</option>
-                            <option value="item">🎁 Item & Skin</option>
-                            <option value="service">⚡ Jasa</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="text-sm text-gray-400 mb-1 block">Urutkan</label>
-                        <select class="w-full px-3 py-2 rounded-lg bg-darker border border-gray-700 text-sm focus:border-primary outline-none">
-                            <option>Terbaru</option>
-                            <option>Termurah</option>
-                            <option>Terlaris</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="text-sm text-gray-400 mb-1 block">Harga Min</label>
-                        <input type="number" placeholder="Rp 0" class="w-full px-3 py-2 rounded-lg bg-darker border border-gray-700 text-sm focus:border-primary outline-none">
-                    </div>
-                    <div>
-                        <label class="text-sm text-gray-400 mb-1 block">Harga Maks</label>
-                        <input type="number" placeholder="Rp 1.000.000" class="w-full px-3 py-2 rounded-lg bg-darker border border-gray-700 text-sm focus:border-primary outline-none">
-                    </div>
-                </div>
-            </div>
-
-            <div id="allProducts" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                <!-- Product Cards -->
-                <div class="bg-card border border-gray-800 rounded-xl overflow-hidden card-hover">
-                    <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=400&h=250&fit=crop" class="w-full h-40 object-cover">
-                    <div class="p-4">
-                        <span class="text-xs font-medium text-primary bg-primary/10 px-2 py-0.5 rounded">💎 Diamond</span>
-                        <h3 class="font-medium mt-2 text-sm">Top Up Diamond MLBB - 70 Diamonds</h3>
-                        <div class="flex justify-between items-center mt-3">
-                            <span class="font-bold text-primary">Rp 12.000</span>
-                            <button class="text-xs px-3 py-1 bg-primary/10 text-primary rounded hover:bg-primary/20">Beli</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-card border border-gray-800 rounded-xl overflow-hidden card-hover">
-                    <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?w=400&h=250&fit=crop" class="w-full h-40 object-cover">
-                    <div class="p-4">
-                        <span class="text-xs font-medium text-primary bg-primary/10 px-2 py-0.5 rounded">💎 Diamond</span>
-                        <h3 class="font-medium mt-2 text-sm">Top Up Diamond FF - 140 Diamonds</h3>
-                        <div class="flex justify-between items-center mt-3">
-                            <span class="font-bold text-primary">Rp 25.000</span>
-                            <button class="text-xs px-3 py-1 bg-primary/10 text-primary rounded hover:bg-primary/20">Beli</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-card border border-gray-800 rounded-xl overflow-hidden card-hover">
-                    <img src="https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?w=400&h=250&fit=crop" class="w-full h-40 object-cover">
-                    <div class="p-4">
-                        <span class="text-xs font-medium text-primary bg-primary/10 px-2 py-0.5 rounded">🏆 Akun</span>
-                        <h3 class="font-medium mt-2 text-sm">Akun Valorant | Rank Immortal | 50+ Skin</h3>
-                        <div class="flex justify-between items-center mt-3">
-                            <span class="font-bold text-primary">Rp 3.500.000</span>
-                            <
--3 py-1 bg-primary/10 text-primary rounded hover:bg-primary/20">Beli</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-card border border-gray-800 rounded-xl overflow-hidden card-hover">
-                    <img src="https://images.unsplash.com/photo-1593305841991-05c22158a4c1?w=400&h=250&fit=crop" class="w-full h-40 object-cover">
-                    <div class="p-4">
-                        <span class="text-xs font-medium text-primary bg-primary/10 px-2 py-0.5 rounded">⚡ Jasa</span>
-                        <h3 class="font-medium mt-2 text-sm">Joki Push Rank MLBB — Master ke Mythic</h3>
-                        <div class="flex justify-between items-center mt-3">
-                            <span class="font-bold text-primary">Rp 75.000</span>
-                            <button class="text-xs px-3 py-1 bg-primary/10 text-primary rounded hover:bg-primary/20">Beli</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-card border border-gray-800 rounded-xl overflow-hidden card-hover">
-                    <img src="https://images.unsplash.com/photo-1605906857495-4c04b3de193e?w=400&h=250&fit=crop" class="w-full h-40 object-cover">
-                    <div class="p-4">
-                        <span class="text-xs font-medium text-primary bg-primary/10 px-2 py-0.5 rounded">🎁 Item</span>
-                        <h3 class="font-medium mt-2 text-sm">Skin Legend / Collector MLBB — Via Gift</h3>
-                        <div class="flex justify-between items-center mt-3">
-                            <span class="font-bold text-primary">Rp 95.000</span>
-                            <button class="text-xs px-3 py-1 bg-primary/10 text-primary rounded hover:bg-primary/20">Beli</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-card border border-gray-800 rounded-xl overflow-hidden card-hover">
-                    <img src="https://images.unsplash.com/photo-1606141056599-6ce2eed9a4f1?w=400&h=250&fit=crop" class="w-full h-40 object-cover">
-                    <div class="p-4">
-                        <span class="text-xs font-medium text-primary bg-primary/10 px-2 py-0.5 rounded">🏆 Akun</span>
-                        <h3 class="font-medium mt-2 text-sm">Akun Genshin Impact AR58 | 15+ Limited 5★</h3>
-                        <div class="flex justify-between items-center mt-3">
-                            <span class="font-bold text-primary">Rp 2.800.000</span>
-                            <button class="text-xs px-3 py-1 bg-primary/10 text-primary rounded hover:bg-primary/20">Beli</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-card border border-gray-800 rounded-xl overflow-hidden card-hover">
-                    <img src="https://images.unsplash.com/photo-1560253023-3ec005e45a30?w=400&h=250&fit=crop" class="w-full h-40 object-cover">
-                    <div class="p-4">
-                        <span class="text-xs font-medium text-primary bg-primary/10 px-2 py-0.5 rounded">⚡ Jasa</span>
-                        <h3 class="font-medium mt-2 text-sm">Jasa Naik Level / Battle Pass — Semua Game</h3>
-                        <div class="flex justify-between items-center mt-3">
-                            <span class="font-bold text-primary">Rp 35.000</span>
-                            <button class="text-xs px-3 py-1 bg-primary/10 text-primary rounded hover:bg-primary/20">Beli</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-card border border-gray-800 rounded-xl overflow-hidden card-hover">
-                    <img src="https://images.unsplash.com/photo-1608889175230-023b59197b94?w=400&h=250&fit=crop" class="w-full h-40 object-cover">
-                    <div class="p-4">
-                        <span class="text-xs font-medium text-primary bg-primary/10 px-2 py-0.5 rounded">💎 Diamond</span>
-                        <h3 class="font-medium mt-2 text-sm">Top Up UC PUBG Mobile — 60 UC</h3>
-                        <div class="flex justify-between items-center mt-3">
-                            <span class="font-bold text-primary">Rp 18.000</span>
-                            <button class="text-xs px-3 py-1 bg-primary/10 text-primary rounded hover:bg-primary/20">Beli</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- SELL SECTION -->
-    <section id="section-sell" class="page-section hidden">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div class="max-w-2xl mx-auto text-center mb-10">
-                <h2 class="text-3xl font-bold mb-3">Jual Produk Kamu</h2>
-                <p class="text-gray-400">Mulai jual akun, item, atau jasa game kamu. Daftar sekarang dan jangkau ribuan pembeli!</p>
-            </div>
-
-            <div class="max-w-xl mx-auto bg-card border border-gray-800 rounded-xl p-6 md:p-8">
-                <div class="space-y-5">
-                    <div>
-                        <label class="block text-sm font-medium mb-2">Nama Produk</label>
-                        <input type="text" id="sellTitle" placeholder="Contoh: Diamond MLBB — 70 Diamonds" class="w-full px-4 py-2.5 rounded-lg bg-darker border border-gray-700 text-sm focus:outline-none focus:border-primary">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-2">Deskripsi</label>
-                        <textarea id="sellDesc" rows="4" placeholder="Jelaskan detail produk kamu..." class="w-full px-4 py-2.5 rounded-lg bg-darker border border-gray-700 text-sm focus:outline-none focus:border-primary resize-none"></textarea>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium mb-2">Kategori</label>
-                            <select id="sellCategory" class="w-full px-4 py-2.5 rounded-lg bg-darker border border-gray-700 text-sm focus:outline-none focus:border-primary">
-                                <option value="">Pilih Kategori</option>
-                                <option value="diamond">💎 Diamond / Top Up</option>
-                                <option value="account">🏆 Akun Game</option>
-                                <option value="item">🎁 Item & Skin</option>
-                                <option value="service">⚡ Jasa / Boosting</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium mb-2">Harga (Rp)</label>
-                            <input type="number" id="sellPrice" placeholder="Contoh: 15000" class="w-full px-4 py-2.5 rounded-lg bg-darker border border-gray-700 text-sm focus:outline-none focus:border-primary">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-2">Gambar Produk (URL)</label>
-                        <input type="url" id="sellImage" placeholder="https://..." class="w-full px-4 py-2.5 rounded-lg bg-darker border border-gray-700 text-sm focus:outline-none focus:border-primary">
-                    </div>
-                    <button onclick="handleCreateProduct()" class="w-full py-3 bg-gradient-to-r from-primary to-secondary text-dark font-semibold rounded-lg hover:scale-[1.02] transition-transform shadow-lg shadow-primary/20 mt-2">
-                        <i class="fa fa-plus-circle mr-2"></i> Pasang Produk
+<!-- HOME PAGE -->
+<section id="page-home" class="page">
+    <div class="container mx-auto px-4 pt-16 pb-24">
+        <div class="grid md:grid-cols-2 gap-12 items-center min-h-[70vh]">
+            <div class="space-y-6">
+                <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm">
+                    <i class="fa fa-bolt"></i> Marketplace Gaming Terpercaya
+                </span>
+                <h1 class="text-4xl md:text-5xl font-bold leading-tight">
+                    Beli & Jual Game<br>
+                    <span class="text-gradient">Aman & Cepat ⚡</span>
+                </h1>
+                <p class="text-gray-400 text-lg">
+                    Tempat terbaik untuk jual beli akun, diamond, item, dan jasa game. Transaksi aman, pengiriman instan, pembeli terverifikasi.
+                </p>
+                <div class="flex flex-wrap gap-4 pt-2">
+                    <button onclick="showPage('produk')" class="px-6 py-3 bg-gradient-to-r from-primary to-secondary text-dark font-semibold rounded-lg hover:scale-105 transition-transform">
+                        <i class="fa fa-shopping-cart mr-2"></i> Mulai Belanja
+                    </button>
+                    <button onclick="showPage('jual')" class="px-6 py-3 border border-gray-700 rounded-lg hover:border-primary/50 transition-colors">
+                        <i class="fa fa-rocket mr-2"></i> Mulai Jual
                     </button>
                 </div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 pt-10">
+                    <div><p class="text-2xl font-bold text-gradient">500+</p><p class="text-gray-500 text-sm">Produk</p></div>
+                    <div><p class="text-2xl font-bold text-gradient">2.500+</p><p class="text-gray-500 text-sm">Transaksi</p></div>
+                    <div><p class="text-2xl font-bold text-gradient">1.200+</p><p class="text-gray-500 text-sm">Pengguna</p></div>
+                    <div><p class="text-2xl font-bold text-gradient">150+</p><p class="text-gray-500 text-sm">Penjual</p></div>
+                </div>
+            </div>
+            <div class="relative">
+                <div class="absolute inset-0 bg-primary/10 rounded-2xl blur-3xl"></div>
+                <div class="relative border border-gray-800 rounded-2xl p-2 bg-card animate-float">
+                    <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=600&h=400&fit=crop" alt="Gaming" class="w-full h-[300px] object-cover rounded-xl">
+                </div>
             </div>
         </div>
-    </section>
 
-    <!-- TRANSACTIONS SECTION -->
-    <section id="section-transactions" class="page-section hidden">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div class="mb-8">
-                <h2 class="text-3xl font-bold mb-2">Transaksi Saya</h2>
-                <p class="text-gray-400">Pantau status pesanan dan penjualan kamu di sini</p>
+        <!-- Kategori -->
+        <div class="mt-24 bg-card/30 rounded-3xl py-16 px-6">
+            <div class="text-center mb-12">
+                <h2 class="text-2xl md:text-3xl font-bold mb-3">Kategori Populer</h2>
+                <p class="text-gray-400">Temukan yang kamu cari</p>
             </div>
-
-            <div class="flex border-b border-gray-800 mb-8">
-                <button class="px-5 py-3 text-primary border-b-2 border-primary font-medium">Pembelian</button>
-                <button class="px-5 py-3 text-gray-400 hover:text-white">Penjualan</button>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-5">
+                <div onclick="showPage('produk')" class="bg-card border border-gray-800 rounded-xl p-6 text-center card-hover cursor-pointer">
+                    <div class="text-3xl mb-2">💎</div>
+                    <h3 class="font-semibold">Diamond</h3>
+                    <p class="text-gray-500 text-sm">Top Up Instan</p>
+                </div>
+                <div onclick="showPage('produk')" class="bg-card border border-gray-800 rounded-xl p-6 text-center card-hover cursor-pointer">
+                    <div class="text-3xl mb-2">🏆</div>
+                    <h3 class="font-semibold">Akun Game</h3>
+                    <p class="text-gray-500 text-sm">Terverifikasi</p>
+                </div>
+                <div onclick="showPage('produk')" class="bg-card border border-gray-800 rounded-xl p-6 text-center card-hover cursor-pointer">
+                    <div class="text-3xl mb-2">🎁</div>
+                    <h3 class="font-semibold">Item & Skin</h3>
+                    <p class="text-gray-500 text-sm">Eksklusif</p>
+                </div>
+                <div onclick="showPage('produk')" class="bg-card border border-gray-800 rounded-xl p-6 text-center card-hover cursor-pointer">
+                    <div class="text-3xl mb-2">⚡</div>
+                    <h3 class="font-semibold">Jasa</h3>
+                    <p class="text-gray-500 text-sm">Boosting & Joki</p>
+                </div>
             </div>
+        </div>
 
-            <div class="bg-card border border-gray-800 rounded-xl p-8 text-center">
-                <div class="text-5xl mb-4">📭</div>
-                <h3 class="text-lg font-semibold mb-2">Belum Ada Transaksi</h3>
-                <p class="text-gray-400 text-sm mb-5">Mulai berbelanja untuk melihat riwayat pesanan kamu di sini</p>
-                <button onclick="showSection('products')" class="px-5 py-2.5 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors">
-                    Mulai Belanja
+        <!-- Produk Unggulan -->
+        <div class="mt-20">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-2xl md:text-3xl font-bold">Produk Terbaru</h2>
+                <a href="#" onclick="showPage('produk')" class="text-primary hover:underline">Lihat Semua →</a>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-card border border-gray-800 rounded-xl overflow-hidden card-hover">
+                    <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=400&h=220&fit=crop" class="w-full h-40 object-cover">
+                    <div class="p-4">
+                        <span class="text-xs text-primary bg-primary/10 px-2 py-1 rounded">💎 Diamond</span>
+                        <h3 class="font-medium mt-2">Top Up Diamond MLBB — 70 Diamonds</h3>
+                        <p class="text-xl font-bold text-primary mt-3">Rp 12.000</p>
+                        <button onclick="beli()" class="w-full mt-3 py-2 bg-primary/10 text-primary rounded-lg hover:bg-primary/20">Beli Sekarang</button>
+                    </div>
+                </div>
+                <div class="bg-card border border-gray-800 rounded-xl overflow-hidden card-hover">
+                    <img src="https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?w=400&h=220&fit=crop" class="w-full h-40 object-cover">
+                    <div class="p-4">
+                        <span class="text-xs text-primary bg-primary/10 px-2 py-1 rounded">🏆 Akun</span>
+                        <h3 class="font-medium mt-2">Akun Valorant — Rank Immortal</h3>
+                        <p class="text-xl font-bold text-primary mt-3">Rp 3.500.000</p>
+                        <button onclick="beli()" class="w-full mt-3 py-2 bg-primary/10 text-primary rounded-lg hover:bg-primary/20">Beli Sekarang</button>
+                    </div>
+                </div>
+                <div class="bg-card border border-gray-800 rounded-xl overflow-hidden card-hover">
+                    <img src="https://images.unsplash.com/photo-1593305841991-05c22158a4c1?w=400&h=220&fit=crop" class="w-full h-40 object-cover">
+                    <div class="p-4">
+                        <span class="text-xs text-primary bg-primary/10 px-2 py-1 rounded">⚡ Jasa</span>
+                        <h3 class="font-medium mt-2">Joki Push Rank — Master ke Mythic</h3>
+                        <p class="text-xl font-bold text-primary mt-3">Rp 75.000</p>
+                        <button onclick="beli()" class="w-full mt-3 py-2 bg-primary/10 text-primary rounded-lg hover:bg-primary/20">Beli Sekarang</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- PRODUK PAGE -->
+<section id="page-produk" class="page hidden">
+    <div class="container mx-auto px-4 pt-12 pb-24">
+        <h2 class="text-3xl font-bold mb-2">Semua Produk</h2>
+        <p class="text-gray-400 mb-8">Jelajahi ribuan produk game terbaik</p>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+            <div class="bg-card border border-gray-800 rounded-xl overflow-hidden card-hover">
+                <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=300&h=180&fit=crop" class="w-full h-36 object-cover">
+                <div class="p-3">
+                    <span
+ class="text-xs text-primary bg-primary/10 px-2 py-0.5 rounded">💎 Diamond</span>
+                    <h3 class="font-medium mt-1 text-sm">Top Up MLBB — 70 Diamonds</h3>
+                    <p class="font-bold text-primary mt-2">Rp 12.000</p>
+                    <button onclick="beli()" class="w-full mt-2 py-1.5 text-sm bg-primary/10 text-primary rounded hover:bg-primary/20">Beli</button>
+                </div>
+            </div>
+            <div class="bg-card border border-gray-800 rounded-xl overflow-hidden card-hover">
+                <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?w=300&h=180&fit=crop" class="w-full h-36 object-cover">
+                <div class="p-3">
+                    <span class="text-xs text-primary bg-primary/10 px-2 py-0.5 rounded">💎 Diamond</span>
+                    <h3 class="font-medium mt-1 text-sm">Top Up FF — 140 Diamonds</h3>
+                    <p class="font-bold text-primary mt-2">Rp 25.000</p>
+                    <button onclick="beli()" class="w-full mt-2 py-1.5 text-sm bg-primary/10 text-primary rounded hover:bg-primary/20">Beli</button>
+                </div>
+            </div>
+            <div class="bg-card border border-gray-800 rounded-xl overflow-hidden card-hover">
+                <img src="https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?w=300&h=180&fit=crop" class="w-full h-36 object-cover">
+                <div class="p-3">
+                    <span class="text-xs text-primary bg-primary/10 px-2 py-0.5 rounded">🏆 Akun</span>
+                    <h3 class="font-medium mt-1 text-sm">Akun Valorant — Immortal</h3>
+                    <p class="font-bold text-primary mt-2">Rp 3.500.000</p>
+                    <button onclick="beli()" class="w-full mt-2 py-1.5 text-sm bg-primary/10 text-primary rounded hover:bg-primary/20">Beli</button>
+                </div>
+            </div>
+            <div class="bg-card border border-gray-800 rounded-xl overflow-hidden card-hover">
+                <img src="https://images.unsplash.com/photo-1593305841991-05c22158a4c1?w=300&h=180&fit=crop" class="w-full h-36 object-cover">
+                <div class="p-3">
+                    <span class="text-xs text-primary bg-primary/10 px-2 py-0.5 rounded">⚡ Jasa</span>
+                    <h3 class="font-medium mt-1 text-sm">Joki MLBB — Master→Mythic</h3>
+                    <p class="font-bold text-primary mt-2">Rp 75.000</p>
+                    <button onclick="beli()" class="w-full mt-2 py-1.5 text-sm bg-primary/10 text-primary rounded hover:bg-primary/20">Beli</button>
+                </div>
+            </div>
+            <div class="bg-card border border-gray-800 rounded-xl overflow-hidden card-hover">
+                <img src="https://images.unsplash.com/photo-1605906857495-4c04b3de193e?w=300&h=180&fit=crop" class="w-full h-36 object-cover">
+                <div class="p-3">
+                    <span class="text-xs text-primary bg-primary/10 px-2 py-0.5 rounded">🎁 Item</span>
+                    <h3 class="font-medium mt-1 text-sm">Skin Collector MLBB — Gift</h3>
+                    <p class="font-bold text-primary mt-2">Rp 95.000</p>
+                    <button onclick="beli()" class="w-full mt-2 py-1.5 text-sm bg-primary/10 text-primary rounded hover:bg-primary/20">Beli</button>
+                </div>
+            </div>
+            <div class="bg-card border border-gray-800 rounded-xl overflow-hidden card-hover">
+                <img src="https://images.unsplash.com/photo-1606141056599-6ce2eed9a4f1?w=300&h=180&fit=crop" class="w-full h-36 object-cover">
+                <div class="p-3">
+                    <span class="text-xs text-primary bg-primary/10 px-2 py-0.5 rounded">🏆 Akun</span>
+                    <h3 class="font-medium mt-1 text-sm">Akun Genshin AR58</h3>
+                    <p class="font-bold text-primary mt-2">Rp 2.800.000</p>
+                    <button onclick="beli()" class="w-full mt-2 py-1.5 text-sm bg-primary/10 text-primary rounded hover:bg-primary/20">Beli</button>
+                </div>
+            </div>
+            <div class="bg-card border border-gray-800 rounded-xl overflow-hidden card-hover">
+                <img src="https://images.unsplash.com/photo-1560253023-3ec005e45a30?w=300&h=180&fit=crop" class="w-full h-36 object-cover">
+                <div class="p-3">
+                    <span class="text-xs text-primary bg-primary/10 px-2 py-0.5 rounded">⚡ Jasa</span>
+                    <h3 class="font-medium mt-1 text-sm">Leveling / Battle Pass</h3>
+                    <p class="font-bold text-primary mt-2">Rp 35.000</p>
+                    <button onclick="beli()" class="w-full mt-2 py-1.5 text-sm bg-primary/10 text-primary rounded hover:bg-primary/20">Beli</button>
+                </div>
+            </div>
+            <div class="bg-card border border-gray-800 rounded-xl overflow-hidden card-hover">
+                <img src="https://images.unsplash.com/photo-1608889175230-023b59197b94?w=300&h=180&fit=crop" class="w-full h-36 object-cover">
+                <div class="p-3">
+                    <span class="text-xs text-primary bg-primary/10 px-2 py-0.5 rounded">💎 Diamond</span>
+                    <h3 class="font-medium mt-1 text-sm">UC PUBG — 60 UC</h3>
+                    <p class="font-bold text-primary mt-2">Rp 18.000</p>
+                    <button onclick="beli()" class="w-full mt-2 py-1.5 text-sm bg-primary/10 text-primary rounded hover:bg-primary/20">Beli</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- JUAL PRODUK PAGE -->
+<section id="page-jual" class="page hidden">
+    <div class="container mx-auto px-4 pt-12 pb-24">
+        <div class="max-w-lg mx-auto">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold mb-2">Jual Produk Kamu</h2>
+                <p class="text-gray-400">Jangkau ribuan pembeli sekarang — gratis pasang iklan!</p>
+            </div>
+            
+            <div class="bg-card border border-gray-800 rounded-xl p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-medium mb-2">Nama Produk</label>
+                    <input type="text" id="jualNama" placeholder="Contoh: Diamond MLBB — 70 Diamonds" 
+                        class="w-full px-4 py-2.5 rounded-lg bg-darker border border-gray-700 text-sm focus:outline-none focus:border-primary">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">Deskripsi</label>
+                    <textarea id="jualDesc" rows="4" placeholder="Jelaskan detail produk kamu..."
+                        class="w-full px-4 py-2.5 rounded-lg bg-darker border border-gray-700 text-sm focus:outline-none focus:border-primary resize-none"></textarea>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Kategori</label>
+                        <select id="jualKategori" class="w-full px-4 py-2.5 rounded-lg bg-darker border border-gray-700 text-sm focus:outline-none focus:border-primary">
+                            <option value="">Pilih Kategori</option>
+                            <option>💎 Diamond / Top Up</option>
+                            <option>🏆 Akun Game</option>
+                            <option>🎁 Item & Skin</option>
+                            <option>⚡ Jasa / Boosting</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Harga (Rp)</label>
+                        <input type="number" id="jualHarga" placeholder="Contoh: 15000"
+                            class="w-full px-4 py-2.5 rounded-lg bg-darker border border-gray-700 text-sm focus:outline-none focus:border-primary">
+                    </div>
+                </div>
+                <button onclick="pasangProduk()" class="w-full py-3 bg-gradient-to-r from-primary to-secondary text-dark font-semibold rounded-lg hover:scale-[1.02] transition-transform mt-2">
+                    <i class="fa fa-plus-circle mr-2"></i> Pasang Produk
                 </button>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- ABOUT SECTION -->
-    <section id="section-about" class="page-section hidden">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div class="max-w-3xl mx-auto text-center mb-16">
-                <h2 class="text-3xl md:text-4xl font-bold mb-6">Tentang <span class="text-gradient">Kazuki Store</span></h2>
-                <p class="text-gray-400 text-lg leading-relaxed">
-                    Kazuki Store adalah marketplace gaming terpercaya di Indonesia yang menghubungkan pembeli dan penjual dalam lingkungan yang aman dan terjamin.
-                    Dengan sistem escrow, dana kamu dijamin aman sampai barang diterima. Kami hadir untuk memudahkan transaksi game favorit kamu.
-                </p>
-            </div>
-
-            <div class="grid md:grid-cols-2 gap-10">
-                <div class="bg-card border border-gray-800 rounded-xl p-6">
-                    <h3 class="text-xl font-semibold mb-4 flex items-center gap-2">
-                        <i class="fa fa-rocket text-primary"></i> Misi Kami
-                    </h3>
-                    <p class="text-gray-400 text-sm leading-relaxed">Menciptakan ekosistem transaksi game yang aman, cepat, dan terpercaya untuk semua pemain di Indonesia.</p>
+<!-- TENTANG PAGE -->
+<section id="page-tentang" class="page hidden">
+    <div class="container mx-auto px-4 pt-12 pb-24">
+        <div class="max-w-2xl mx-auto text-center">
+            <h2 class="text-3xl font-bold mb-6">Tentang <span class="text-gradient">Kazuki Store</span></h2>
+            <p class="text-gray-400 text-lg leading-relaxed mb-10">
+                Kazuki Store adalah marketplace gaming terpercaya di Indonesia. Kami menghubungkan pembeli dan penjual dalam lingkungan yang aman dengan sistem escrow — dana dijamin sampai barang diterima.
+            </p>
+            
+            <div class="grid md:grid-cols-3 gap-6 mt-12">
+                <div class="bg-card border border-gray-800 rounded-xl p-6 card-hover">
+                    <i class="fa fa-shield text-3xl text-primary mb-4"></i>
+                    <h3 class="font-semibold mb-2">Transaksi Aman</h3>
+                    <p class="text-gray-400 text-sm">Dana ditahan sistem sampai barang diterima</p>
                 </div>
-                <div class="bg-card border border-gray-800 rounded-xl p-6">
-                    <h3 class="text-xl font-semibold mb-4 flex items-center gap-2">
-                        <i class="fa fa-eye text-primary"></i> Visi Kami
-                    </h3>
-                    <p class="text-gray-400 text-sm leading-relaxed">Menjadi platform marketplace gaming nomor 1 dan paling dipercaya di Asia Tenggara.</p>
+                <div class="bg-card border border-gray-800 rounded-xl p-6 card-hover">
+                    <i class="fa fa-bolt text-3xl text-primary mb-4"></i>
+                    <h3 class="font-semibold mb-2">Pengiriman Instan</h3>
+                    <p class="text-gray-400 text-sm">Layanan aktif 24 jam, proses cepat</p>
+                </div>
+                <div class="bg-card border border-gray-800 rounded-xl p-6 card-hover">
+                    <i class="fa fa-users text-3xl text-primary mb-4"></i>
+                    <h3 class="font-semibold mb-2">Komunitas Terpercaya</h3>
+                    <p class="text-gray-400 text-sm">Ribuan transaksi berhasil setiap bulan</p>
                 </div>
             </div>
         </div>
-    </section>
-</main>
+    </div>
+</section>
 
-<!-- Footer -->
-<footer class="bg-card border-t border-gray-800 mt-20">
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+<!-- FOOTER -->
+<footer class="bg-card border-t border-gray-800 py-12 mt-20">
+    <div class="container mx-auto px-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
-                <h3 class="text-xl font-bold mb-4 text-gradient">KAZUKI STORE</h3>
-                <p class="text-gray-400 text-sm leading-relaxed mb-4">
-                    Marketplace gaming terpercaya. Transaksi aman, cepat, dan terjamin.
-                </p>
-                <div class="flex gap-3">
-                    <a href="#" class="w-9 h-9 rounded-full bg-card-light flex items-center justify-center text-gray-400 hover:text-primary hover:bg-primary/10 transition-colors">
-                        <i class="fa fa-instagram"></i>
-                    </a>
-                    <a href="#" class="w-9 h-9 rounded-full bg-card-light flex items-center justify-center text-gray-400 hover:text-primary hover:bg-primary/10 transition-colors">
-                        <i class="fa fa-discord"></i>
-                    </a>
-                    <a href="#" class="w-9 h-9 rounded-full bg-card-light flex items-center justify-center text-gray-400 hover:text-primary hover:bg-primary/10 transition-colors">
-                        <i class="fa fa-whatsapp"></i>
-                    </a>
+                <h3 class="text-xl font-bold text-gradient mb-3">KAZUKI STORE</h3>
+                <p class="text-gray-400 text-sm">Marketplace gaming terpercaya di Indonesia</p>
+            </div>
+            <div>
+                <h4 class="font-semibold mb-3">Menu</h4>
+                <div class="space-y-2 text-sm">
+                    <a href="#" onclick="showPage('home')" class="block text-gray-400 hover:text-primary">Beranda</a>
+                    <a href="#" onclick="showPage('produk')" class="block text-gray-400 hover:text-primary">Produk</a>
+                    <a href="#" onclick="showPage('jual')" class="block text-gray-400 hover:text-primary">Jual Produk</a>
+                    <a href="#" onclick="showPage('tentang')" class="block text-gray-400 hover:text-primary">Tentang Kami</a>
                 </div>
             </div>
             <div>
-                <h4 class="font-semibold mb-3">Tautan Cepat</h4>
-                <ul class="space-y-2 text-sm">
-                    <li><a href="#" onclick="showSection('home')" class="text-gray-400 hover:text-primary">Beranda</a></li>
-                    <li><a href="#" onclick="showSection('products')" class="text-gray-400 hover:text-primary">Produk</a></li>
-                    <li><a href="#" onclick="showSection('sell')" class="text-gray-400 hover:text-primary">Jual Produk</a></li>
-                    <li><a href="#" onclick="showSection('about')" class="text-gray-400 hover:text-primary">Tentang Kami</a></li>
-                </ul>
-            </div>
-            <div>
-                <h4 class="font-semibold mb-3">Bantuan</h4>
-                <ul class="space-y-2 text-sm">
-                    <li><a href="#" class="text-gray-400 hover:text-primary">Cara Berbelanja</a></li>
-                    <li><a href="#" class="text-gray-400 hover:text-primary">Cara Berjualan</a></li>
-                    <li><a href="#" class="text-gray-400 hover:text-primary">Syarat & Ketentuan</a></li>
-                    <li><a href="#" class="text-gray-400 hover:text-primary">Kebijakan Privasi</a></li>
-                </ul>
-            </div>
-            <div>
-                <h4 class="font-semibold mb-3">Hubungi Kami</h4>
-                <ul class="space-y-2 text-sm text-gray-400">
-                    <li class="flex items-center gap-2"><i class="fa fa-envelope-o text-primary"></i> support@kazukistore.my.id</li>
-                    <li class="flex items-center gap-2"><i class="fa fa-whatsapp text-primary"></i> +62 8xx-xxxx-xxxx</li>
-                    <li class="flex items-center gap-2"><i class="fa fa-clock-o text-primary"></i> Layanan 24/7</li>
-                </ul>
+                <h4 class="font-semibold mb-3">Hubungi</h4>
+                <div class="space-y-2 text-sm text-gray-400">
+                    <p><i class="fa fa-envelope-o mr-2 text-primary"></i> support@kazukistore.com</p>
+                    <p><i class="fa fa-whatsapp mr-2 text-primary"></i> +62 8xx-xxxx-xxxx</p>
+                </div>
             </div>
         </div>
-        <div class="border-t border-gray-800 mt-10 pt-6 text-center text-gray-500 text-xs">
-            <p>&copy; 2026 Kazuki Store. Semua Hak Dilindungi.</p>
+        <div class="border-t border-gray-800 mt-8 pt-6 text-center text-gray-500 text-sm">
+            © 2026 Kazuki Store — Semua Hak Dilindungi
         </div>
     </div>
 </footer>
 
-<!-- MODAL -->
-<div id="modalOverlay" class="fixed inset-0 z-[100] hidden">
-    <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" onclick="closeModal()"></div>
-    <div class="absolute inset-0 flex items-center justify-center p-4">
-        <div id="modalBox" class="bg-card border border-gray-800 rounded-2xl p-6 w-full max-w-md relative z-10 shadow-2xl">
-            <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white text-lg">
+<!-- LOGIN MODAL -->
+<div id="loginModal" class="fixed inset-0 z-[80] hidden">
+    <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" onclick="closeLogin()"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md p-4">
+        <div class="bg-card border border-gray-800 rounded-2xl p-6 shadow-2xl">
+            <button onclick="closeLogin()" class="absolute top-4 right-4 text-gray-400 hover:text-white">
                 <i class="fa fa-times"></i>
             </button>
-
-            <div id="alertBox" class="hidden bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 text-sm p-3
-rounded-lg mb-4 flex items-center gap-2">
-                <i class="fa fa-exclamation-triangle"></i>
-                <span id="alertText"></span>
-            </div>
-
-            <h2 id="modalTitle" class="text-xl font-bold text-center mb-1">Masuk ke Akun</h2>
-            <p id="modalSubtitle" class="text-gray-400 text-sm text-center mb-6">Selamat datang kembali! Silakan masuk ke akunmu</p>
-
-            <!-- Login Form -->
-            <div id="loginForm">
-                <button class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-card-light border border-gray-700 text-sm mb-3 hover:border-primary/50 transition-colors">
-                    <span>🔵</span> Masuk dengan Google
-                </button>
-                <button class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-card-light border border-gray-700 text-sm mb-3 hover:border-primary/50 transition-colors">
-                    <span>🔵</span> Masuk dengan Facebook
-                </button>
-                <button class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-card-light border border-gray-700 text-sm mb-5 hover:border-primary/50 transition-colors">
-                    <span>🟣</span> Masuk dengan Discord
-                </button>
-
-                <div class="flex items-center gap-3 mb-5">
-                    <div class="flex-1 h-px bg-gray-700"></div>
-                    <span class="text-gray-500 text-xs">atau</span>
-                    <div class="flex-1 h-px bg-gray-700"></div>
-                </div>
-
-                <div class="space-y-4 mb-5">
-                    <div>
-                        <label class="block text-sm font-medium mb-1.5">Email</label>
-                        <input type="email" id="inputEmail" placeholder="email@contoh.com" class="w-full px-4 py-2.5 rounded-lg bg-darker border border-gray-700 text-sm focus:outline-none focus:border-primary">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-1.5">Kata Sandi</label>
-                        <input type="password" id="inputPassword" placeholder="Masukkan kata sandi" class="w-full px-4 py-2.5 rounded-lg bg-darker border border-gray-700 text-sm focus:outline-none focus:border-primary">
-                    </div>
-                </div>
-
-                <button onclick="handleLogin()" class="w-full py-2.5 bg-gradient-to-r from-primary to-secondary text-dark font-semibold rounded-lg hover:scale-[1.02] transition-transform shadow-lg shadow-primary/20">
+            <h2 class="text-2xl font-bold text-center mb-6">Masuk ke Akun</h2>
+            <div class="space-y-4">
+                <input type="email" placeholder="Email" 
+                    class="w-full px-4 py-2.5 rounded-lg bg-darker border border-gray-700 text-sm focus:outline-none focus:border-primary">
+                <input type="password" placeholder="Kata Sandi" 
+                    class="w-full px-4 py-2.5 rounded-lg bg-darker border border-gray-700 text-sm focus:outline-none focus:border-primary">
+                <button onclick="closeLogin(); showToast('Berhasil masuk! 🎉')" 
+                    class="w-full py-2.5 bg-gradient-to-r from-primary to-secondary text-dark font-semibold rounded-lg">
                     Masuk
                 </button>
-                <p class="text-center text-sm text-gray-400 mt-4">
-                    Belum punya akun? <a href="#" onclick="switchModalForm('register')" class="text-primary hover:underline">Daftar sekarang</a>
-                </p>
-            </div>
-
-            <!-- Register Form -->
-            <div id="registerForm" class="hidden">
-                <div class="space-y-4 mb-5">
-                    <div>
-                        <label class="block text-sm font-medium mb-1.5">Nama Lengkap</label>
-                        <input type="text" id="inputName" placeholder="Masukkan namamu" class="w-full px-4 py-2.5 rounded-lg bg-darker border border-gray-700 text-sm focus:outline-none focus:border-primary">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-1.5">Email</label>
-                        <input type="email" id="inputEmailReg" placeholder="email@contoh.com" class="w-full px-4 py-2.5 rounded-lg bg-darker border border-gray-700 text-sm focus:outline-none focus:border-primary">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-1.5">Kata Sandi</label>
-                        <input type="password" id="inputPasswordReg" placeholder="Buat kata sandi" class="w-full px-4 py-2.5 rounded-lg bg-darker border border-gray-700 text-sm focus:outline-none focus:border-primary">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-1.5">Konfirmasi Kata Sandi</label>
-                        <input type="password" id="inputPasswordReg2" placeholder="Ulangi kata sandi" class="w-full px-4 py-2.5 rounded-lg bg-darker border border-gray-700 text-sm focus:outline-none focus:border-primary">
-                    </div>
-                </div>
-
-                <button onclick="handleRegister()" class="w-full py-2.5 bg-gradient-to-r from-primary to-secondary text-dark font-semibold rounded-lg hover:scale-[1.02] transition-transform shadow-lg shadow-primary/20">
-                    Daftar
-                </button>
-                <p class="text-center text-sm text-gray-400 mt-4">
-                    Sudah punya akun? <a href="#" onclick="switchModalForm('login')" class="text-primary hover:underline">Masuk di sini</a>
+                <p class="text-center text-sm text-gray-400">
+                    Belum punya akun? <a href="#" class="text-primary hover:underline">Daftar</a>
                 </p>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Toast Notification -->
-<div id="toast" class="fixed bottom-6 right-6 z-[200] bg-card border border-primary text-white px-5 py-3 rounded-xl shadow-2xl transition-all duration-300 opacity-0 translate-y-4 pointer-events-none max-w-sm">
+<!-- TOAST NOTIFICATION -->
+<div id="toast" class="fixed bottom-6 right-6 z-[90] bg-card border border-primary text-white px-5 py-3 rounded-xl shadow-2xl opacity-0 translate-y-4 toast pointer-events-none">
     <div class="flex items-center gap-3">
         <i id="toastIcon" class="fa fa-check-circle text-primary text-lg"></i>
-        <span id="toastMessage" class="text-sm font-medium"></span>
+        <span id="toastMsg" class="text-sm font-medium"></span>
     </div>
 </div>
 
 <script>
 // ======================================
-// FIREBASE CONFIG — SIAP PAKAI
-// Daftar di firebase.google.com, buat project, ganti config di bawah ini!
-// ======================================
-const firebaseConfig = {
-    apiKey: "AIzaSyD3Q5uW6Hh-REPLACE-DENGAN-APIKEY-KAMU",
-    authDomain: "kazuki-store.firebaseapp.com",
-    projectId: "kazuki-store",
-    storageBucket: "kazuki-store.appspot.com",
-    messagingSenderId: "123456789012",
-    appId: "1:123456789012:web:abc123def456ghi789jkl0"
-};
-
-// Init Firebase
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
-
-// State
-let currentUser = null;
-let currentSection = 'home';
-
-// ======================================
-// INTRO ANIMATION
+// INTRO ANIMATION — LANGSUNG JALAN!
 // ======================================
 window.addEventListener('load', () => {
     setTimeout(() => {
-        const intro = document.getElementById('introScreen');
-        const mainContent = document.getElementById('mainContent');
-        
-        intro.classList.add('intro-hide');
-        mainContent.classList.add('page-visible');
-        
-        // Check auth state after intro
-        setTimeout(() => {
-            checkAuthState();
-        }, 800);
+        document.getElementById('intro').classList.add('intro-hidden');
+        document.getElementById('main').classList.add('page-visible');
     }, 2800);
 });
 
 // ======================================
-// NAVIGATION & SECTIONS
+// NAVIGASI
 // ======================================
-function showSection(sectionName) {
-    document.querySelectorAll('.page-section').forEach(sec => {
-        sec.classList.add('hidden');
-    });
-    
-    const target = document.getElementById(`section-${sectionName}`);
-    if (target) {
-        target.classList.remove('hidden');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        currentSection = sectionName;
-    }
-    
-    document.getElementById('userDropdown').classList.add('hidden');
+function showPage(nama) {
+    document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+    const halaman = document.getElementById(`page-${nama}`);
+    if (halaman) halaman.classList.remove('hidden');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-function filterByCategory(category) {
-    showSection('products');
-    document.getElementById('filterCategory').value = category;
-    showToast(`Menampilkan produk: ${category === 'diamond' ? '💎 Diamond' : category === 'account' ? '🏆 Akun Game' : category === 'item' ? '🎁 Item & Skin' : '⚡ Jasa'}`);
-}
-
-// ======================================
-// SEARCH & MOBILE MENU
-// ======================================
-function toggleSearch() {
-    const bar = document.getElementById('searchBar');
-    bar.classList.toggle('hidden');
-    if (!bar.classList.contains('hidden')) {
-        document.getElementById('searchInput').focus();
-    }
-}
-
-function toggleMobileMenu() {
+function toggleMenu() {
     document.getElementById('mobileMenu').classList.toggle('hidden');
 }
 
-function toggleUserDropdown() {
-    document.getElementById('userDropdown').classList.toggle('hidden');
-}
-
-// Close dropdown when clicking outside
-document.addEventListener('click', (e) => {
-    const menu = document.getElementById('userMenu');
-    const dropdown = document.getElementById('userDropdown');
-    if (!menu.contains(e.target)) {
-        dropdown.classList.add('hidden');
-    }
-});
-
 // ======================================
-// MODAL FUNCTIONS
+// MODAL & TOAST
 // ======================================
-function openModal(type, alertMsg = '') {
-    document.getElementById('modalOverlay').classList.remove('hidden');
+function openLogin() {
+    document.getElementById('loginModal').classList.remove('hidden');
     document.body.style.overflow = 'hidden';
-    switchModalForm(type);
-    if (alertMsg) showAlert(alertMsg);
 }
 
-function closeModal() {
-    document.getElementById('modalOverlay').classList.add('hidden');
+function closeLogin() {
+    document.getElementById('loginModal').classList.add('hidden');
     document.body.style.overflow = '';
-    hideAlert();
-    resetForm();
 }
 
-function switchModalForm(type) {
-    resetForm();
-    if (type === 'login') {
-        document.getElementById('loginForm').classList.remove('hidden');
-        document.getElementById('registerForm').classList.add('hidden');
-        document.getElementById('modalTitle').textContent = 'Masuk ke Akun';
-        document.getElementById('modalSubtitle').textContent = 'Selamat datang kembali! Silakan masuk ke akunmu';
-    } else {
-        document.getElementById('loginForm').classList.add('hidden');
-        document.getElementById('registerForm').classList.remove('hidden');
-        document.getElementById('modalTitle').textContent = 'Buat Akun Baru';
-        document.getElementById('modalSubtitle').textContent = 'Bergabunglah sekarang dan mulai berbelanja';
-    }
-}
-
-function resetForm() {
-    hideAlert();
-    const inputs = ['inputEmail', 'inputPassword', 'inputName', 'inputEmailReg', 'inputPasswordReg', 'inputPasswordReg2'];
-    inputs.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.value = '';
-    });
-}
-
-function showAlert(msg) {
-    document.getElementById('alertText').textContent = msg;
-    document.getElementById('alertBox').classList.remove('hidden');
-}
-
-function hideAlert() {
-    document.getElementById('alertBox').classList.add('hidden');
-}
-
-// ======================================
-// AUTH FUNCTIONS
-// ======================================
-function checkAuthState() {
-    auth.onAuthStateChanged(user => {
-        if (user) {
-            currentUser = {
-                uid: user.uid,
-                name: user.displayName || user.email.split('@')[0],
-                email: user.email
-            };
-            updateAuthUI();
-        } else {
-            currentUser = null;
-            updateAuthUI();
-        }
-    });
-}
-
-function handleLogin() {
-    const email = document.getElementById('inputEmail').value.trim();
-    const password = document.getElementById('inputPassword').value;
-
-    if (!email || !password) {
-        showAlert('Harap lengkapi semua data!');
-        return;
-    }
-
-    auth.signInWithEmailAndPassword(email, password)
-        .then(userCredential => {
-            currentUser = {
-                uid: userCredential.user.uid,
-                name: userCredential.user.displayName || email.split('@')[0],
-                email: email
-            };
-            updateAuthUI();
-            closeModal();
-            showToast(`Berhasil masuk! Selamat datang, ${currentUser.name} 🎉`);
-        })
-        .catch(error => {
-            if (error.code === 'auth/user-not-found') {
-                showAlert('Akun tidak ditemukan. Silakan daftar terlebih dahulu.');
-            } else if (error.code === 'auth/wrong-password') {
-                showAlert('Kata sandi salah. Coba lagi.');
-            } else {
-                showAlert('Error: ' + error.message);
-            }
-        });
-}
-
-function handleRegister() {
-    const name = document.getElementById('inputName').value.trim();
-    const email = document.getElementById('inputEmailReg').value.trim();
-    const pass1 = document.getElementById('inputPasswordReg').value;
-    const pass2 = document.getElementById('inputPasswordReg2').value;
-
-    if (!name || !email || !pass1 || !pass2) {
-        showAlert('Harap lengkapi semua data!');
-        return;
-    }
-
-    if (pass1 !== pass2) {
-        showAlert('Kata sandi tidak cocok!');
-        return;
-    }
-
-    auth.createUserWithEmailAndPassword(email, pass1)
-        .then(userCredential => {
-            return userCredential.user.updateProfile({
-                displayName: name
-            }).then(() => {
-                currentUser = {
-                    uid: userCredential.user.uid,
-                    name: name,
-                    email: email
-                };
-                return db.collection('users').doc(userCredential.user.uid).set({
-                    name: name,
-                    email: email,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-            });
-        })
-        .then(() => {
-            updateAuthUI();
-            closeModal();
-            showToast(`Berhasil daftar! Selamat datang, ${name} 🎉`);
-        })
-        .catch(error => {
-            showAlert('Error: ' + error.message);
-        });
-}
-
-function logout() {
-    auth.signOut().then(() => {
-        currentUser = null;
-        updateAuthUI();
-        showToast('Berhasil keluar. Sampai jumpa! 👋');
-    });
-}
-
-function updateAuthUI() {
-    const guestMenu = document.getElementById('guestMenu');
-    const userMenu = document.getElementById('userMenu');
-    const userNameEl = document.getElementById('userName');
-    const userInitialEl = document.getElementById('userInitial');
-    
-    if (currentUser) {
-        guestMenu.classList.add('hidden');
-        userMenu.classList.remove('hidden');
-        userMenu.style.display = 'flex';
-        userNameEl.textContent = currentUser.name;
-        userInitialEl.textContent = currentUser.name.charAt(0).toUpperCase();
-    } else {
-        guestMenu.classList.remove('hidden');
-        userMenu.classList.add('hidden');
-    }
-}
-
-// ======================================
-// PRODUCT FUNCTIONS
-// ======================================
-function handleBuy(productName, price) {
-    if (!currentUser) {
-        openModal('login', '⚠️ Silakan login terlebih dahulu untuk berbelanja');
-        return;
-    }
-    
-    showToast(`✅ ${productName} — Rp ${price.toLocaleString('id-ID')}`);
-    
-    db.collection('transactions').add({
-        productName: productName,
-        price: price,
-        buyerId: currentUser.uid,
-        buyerName: currentUser.name,
-        status: 'pending',
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    }).catch(err => console.log('Transaction saved locally (Firebase not connected)'));
-}
-
-function handleCreateProduct() {
-    if (!currentUser) {
-        openModal('login', '⚠️ Silakan login terlebih dahulu untuk menjual');
-        return;
-    }
-
-    const title = document.getElementById('sellTitle').value.trim();
-    const desc = document.getElementById('
-sellDesc').value.trim();
-    const category = document.getElementById('sellCategory').value;
-    const price = parseInt(document.getElementById('sellPrice').value);
-    const image = document.getElementById('sellImage').value.trim();
-
-    if (!title || !desc || !category || !price) {
-        showToast('Harap lengkapi semua data yang wajib diisi! ⚠️', 'warning');
-        return;
-    }
-
-    const newProduct = {
-        title: title,
-        description: desc,
-        category: category,
-        price: price,
-        image: image || 'https://images.unsplash.com/photo-1560419015-7c427e8ae5ba?w=400&h=250&fit=crop',
-        sellerId: currentUser.uid,
-        sellerName: currentUser.name,
-        status: 'active',
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    };
-
-    db.collection('products').add(newProduct)
-        .then(() => {
-            showToast('🎉 Produk berhasil dipasang!', 'success');
-            document.getElementById('sellTitle').value = '';
-            document.getElementById('sellDesc').value = '';
-            document.getElementById('sellCategory').value = '';
-            document.getElementById('sellPrice').value = '';
-            document.getElementById('sellImage').value = '';
-        })
-        .catch(err => {
-            console.log('Firebase belum terhubung — produk disimpan sementara', err);
-            showToast('✅ Produk berhasil dipasang! (Demo Mode)', 'success');
-            document.getElementById('sellTitle').value = '';
-            document.getElementById('sellDesc').value = '';
-            document.getElementById('sellCategory').value = '';
-            document.getElementById('sellPrice').value = '';
-            document.getElementById('sellImage').value = '';
-        });
-}
-
-// ======================================
-// TOAST NOTIFICATION
-// ======================================
-function showToast(msg, type = 'success') {
+function showToast(pesan, icon = 'fa fa-check-circle') {
     const toast = document.getElementById('toast');
-    const toastMessage = document.getElementById('toastMessage');
-    const toastIcon = document.getElementById('toastIcon');
-    
-    toastMessage.textContent = msg;
-    
-    if (type === 'success') {
-        toastIcon.className = 'fa fa-check-circle text-primary text-lg';
-    } else if (type === 'warning') {
-        toastIcon.className = 'fa fa-exclamation-triangle text-yellow-400 text-lg';
-    } else if (type === 'error') {
-        toastIcon.className = 'fa fa-times-circle text-red-400 text-lg';
-    }
-
-    toast.classList.remove('opacity-0', 'translate-y-4');
-    toast.classList.add('opacity-100', 'translate-y-0');
+    document.getElementById('toastMsg').textContent = pesan;
+    document.getElementById('to
+Icon').className = `${icon} text-primary text-lg`;
+    toast.classList.add('toast-show');
     
     setTimeout(() => {
-        toast.classList.add('opacity-0', 'translate-y-4');
-        toast.classList.remove('opacity-100', 'translate-y-0');
-    }, 3500);
+        toast.classList.remove('toast-show');
+    }, 3000);
 }
 
+// ======================================
+// FUNGSI TOMBOL
+// ======================================
+function beli() {
+    showToast('Berhasil masuk keranjang! 🛒', 'fa fa-shopping-cart');
+}
+
+function pasangProduk() {
+    const nama = document.getElementById('jualNama').value.trim();
+    const harga = document.getElementById('jualHarga').value;
+    
+    if (!nama || !harga) {
+        showToast('Lengkapi data produk dulu! ⚠️', 'fa fa-exclamation-triangle');
+        return;
+    }
+    
+    showToast('Produk berhasil dipasang! 🎉', 'fa fa-check-circle');
+    
+    // Reset form
+    document.getElementById('jualNama').value = '';
+    document.getElementById('jualDesc').value = '';
+    document.getElementById('jualKategori').value = '';
+    document.getElementById('jualHarga').value = '';
+}
 </script>
 
 </body>
