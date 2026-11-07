@@ -5,245 +5,468 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kazuki Store</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        
-        body {
-            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
-            min-height: 100vh;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
         }
 
-        /* LOADING */
-        .loading {
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #1e3a8a 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        /* === LOADING SCREEN KEREN === */
+        .loading-screen {
             position: fixed;
             inset: 0;
-            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            background: linear-gradient(135deg, #0f172a, #1e293b);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            z-index: 999;
-            transition: opacity 0.5s ease;
+            z-index: 9999;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
         }
-        .loading.hide { opacity: 0; pointer-events: none; }
-        .loading h1 { font-size: 2rem; color: #1565c0; margin-bottom: 30px; }
-        .ring {
-            width: 50px;
-            height: 50px;
-            border: 4px solid #90caf9;
-            border-top-color: #1976d2;
-            border-radius: 50%;
-            animation: putar 0.8s linear infinite;
+        .loading-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
         }
-        @keyframes putar { to { transform: rotate(360deg); } }
-        .loading p { margin-top: 15px; color: #4296e7; font-size: 0.9rem; }
-
-        /* KONTEN */
-        .wrap { max-width: 400px; margin: 0 auto; padding: 20px; display: none; }
-        .wrap.show { display: block; }
-
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
+        .loading-logo {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, #60a5fa, #a78bfa, #60a5fa);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 2s linear infinite;
+            margin-bottom: 40px;
         }
-        .top-bar h2 { color: #0d47a1; font-size: 1.4rem; }
-        .keluar {
-            background: #90caf9;
-            color: #0d47a1;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 500;
+        @keyframes shine {
+            to { background-position: 200% center; }
         }
-
-        .profil {
-            background: white;
-            border-radius: 20px;
-            padding: 25px;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(13, 71, 161, 0.1);
-            margin-bottom: 20px;
+        .loading-spinner {
+            position: relative;
+            width: 70px;
+            height: 70px;
         }
-        .profil img {
-            width: 130px;
-            height: 130px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid #90caf9;
-            margin-bottom: 15px;
-        }
-        .profil h3 { color: #0d47a1; font-size: 1.2rem; }
-        .profil p { color: #5e92d3; font-size: 0.9rem; margin-top: 5px; }
-
-        .card {
-            background: white;
-            border-radius: 16px;
-            padding: 22px;
-            box-shadow: 0 4px 15px rgba(13, 71, 161, 0.08);
-            margin-bottom: 16px;
-        }
-        .produk { text-align: center; }
-        .produk .ikon { font-size: 45px; margin-bottom: 8px; }
-        .produk h4 { color: #0d47a1; font-size: 1rem; }
-        .harga { font-size: 1.8rem; font-weight: 700; color: #1565c0; margin-top: 8px; }
-
-        label { display: block; margin-bottom: 6px; color: #16509c; font-weight: 500; font-size: 0.9rem; }
-        input {
+        .loading-spinner span {
+            position: absolute;
             width: 100%;
-            padding: 12px;
-            border: 2px solid #bbdefb;
-            border-radius: 10px;
-            font-size: 0.95rem;
-            margin-bottom: 14px;
-            background: #f5faff;
+            height: 100%;
+            border: 3px solid transparent;
+            border-top-color: #60a5fa;
+            border-radius: 50%;
+            animation: spin 1.2s linear infinite;
         }
-        input:focus { outline: none; border-color: #1976d2; }
+        .loading-spinner span:nth-child(2) {
+            width: 55px;
+            height: 55px;
+            top: 7.5px;
+            left: 7.5px;
+            border-top-color: #a78bfa;
+            animation-duration: 1s;
+            animation-direction: reverse;
+        }
+        .loading-spinner span:nth-child(3) {
+            width: 40px;
+            height: 40px;
+            top: 15px;
+            left: 15px;
+            border-top-color: #7dd3fc;
+            animation-duration: 0.8s;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .loading-text {
+            margin-top: 30px;
+            font-size: 1rem;
+            color: #94a3b8;
+            letter-spacing: 2px;
+        }
+        .loading-dots::after {
+            content: '';
+            animation: dots 1.5s steps(4, end) infinite;
+        }
+        @keyframes dots {
+            0%, 20% { content: ''; }
+            40% { content: '.'; }
+            60% { content: '..'; }
+            80%, 100% { content: '...'; }
+        }
 
-        .btn {
+        /* === HALAMAN LOGIN === */
+        .auth-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .auth-card {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(96, 165, 250, 0.2);
+            border-radius: 24px;
+            padding: 40px 30px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        .auth-title {
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .auth-subtitle {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 0.95rem;
+            margin-bottom: 30px;
+        }
+        .login-alert {
+            background: rgba(96, 165, 250, 0.1);
+            border: 1px solid rgba(96, 165, 250, 0.3);
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+            color: #93c5fd;
+            font-size: 0.9rem;
+            margin-bottom: 25px;
+        }
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 25px 0;
+        }
+        .divider-line {
+            flex: 1;
+            height: 1px;
+            background: rgba(148, 163, 184, 0.3);
+        }
+        .divider-text {
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+        .social-btn {
             width: 100%;
             padding: 14px;
-            background: linear-gradient(135deg, #2196f3, #1565c0);
-            color: white;
+            border-radius: 12px;
+            border: 1px solid rgba(148, 163, 184, 0.3);
+            background: rgba(255, 255, 255, 0.05);
+            color: #e2e8f0;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+        }
+        .social-btn:hover {
+            background: rgba(96, 165, 250, 0.15);
+            border-color: #60a5fa;
+            transform: translateY(-2px);
+        }
+        .google-icon {
+            width: 20px;
+            height: 20px;
+            background: conic-gradient(from -45deg, #ea4335 110deg, #4285f4 90deg 180deg, #34a853 180deg 270deg, #fbbc05 270deg) 73% 55%/150% 150% no-repeat;
+            border-radius: 50%;
+        }
+        .form-group {
+            margin-bottom: 18px;
+        }
+        .form-group label {
+            display: block;
+            color: #cbd5e1;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(148, 163, 184, 0.3);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 0.95rem;
+            transition: border 0.3s ease;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #60a5fa;
+        }
+        .main-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #3b82f6, #6366f1);
             border: none;
             border-radius: 10px;
+            color: white;
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: transform 0.2s ease;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            margin-top: 8px;
         }
-        .btn:hover { transform: translateY(-2px); }
-        .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-
-        .pesan {
-            margin-top: 12px;
-            padding: 12px;
-            border-radius: 8px;
-            display: none;
+        .main-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+        }
+        .switch-auth {
+            text-align: center;
+            margin-top: 20px;
+            color: #94a3b8;
             font-size: 0.9rem;
         }
-        .pesan.tampil { display: block; }
-        .sukses { background: #e8f5e9; color: #2e7d32; }
-        .gagal { background: #ffebee; color: #c62828; }
-        .info { background: #e3f2fd; color: #1565c0; }
+        .switch-auth a {
+            color: #60a5fa;
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        .message-box {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            display: none;
+        }
+        .message-box.show { display: block; }
+        .msg-success { background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); color: #86efac; }
+        .msg-error { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #fca5a5; }
 
-        a { color: #1976d2; text-decoration: none; font-weight: 500; }
-
-        footer { text-align: center; margin-top: 30px; color: #5e92d3; font-size: 0.8rem; }
+        /* === HALAMAN UTAMA === */
+        .main-page {
+            display: none;
+            padding-bottom: 40px;
+        }
+        .main-page.show { display: block; }
+        .nav-bar {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(96, 165, 250, 0.15);
+        }
+        .nav-logo {
+            font-size: 1.3rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .nav-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .nav-username {
+            font-size: 0.9rem;
+            color: #cbd5e1;
+        }
+        .logout-btn {
+            padding: 8px 14px;
+            background: rgba(239, 68, 68, 0.15);
+            color: #fca5a5;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.25);
+        }
+        .hero {
+            text-align: center;
+            padding: 40px 20px 30px;
+        }
+        .hero h1 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+        .hero p {
+            color: #94a3b8;
+        }
+        .premium-badge {
+            display: inline-block;
+            background: linear-gradient(90deg, #f59e0b, #eab308);
+            color: #000;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+        .section-title {
+            padding: 0 20px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section-title span {
+            background: linear-gradient(90deg, #f59e0b, #eab308);
+            color: #000;
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 6px;
+        }
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 20px;
+            padding: 0 20px;
+        }
+        .product-card {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(96, 165, 250, 0.15);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(245, 158, 11, 0.4);
+            box-shadow: 0 10px 30px rgba(245, 158, 11, 0.1);
+        }
+        .product-premium-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(90deg, #f59e0b, #eab308);
+            color: #000;
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+        }
+        .product-icon {
+            font-size: 45px;
+            margin-bottom: 12px;
+        }
+        .product-name {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .product-desc {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            margin-bottom: 12px;
+        }
+        .product-price {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #fbbf24;
+            margin-bottom: 12px;
+        }
+        .buy-btn {
+            width: 100%;
+            padding: 10px;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            border: none;
+            border-radius: 8px;
+            color: #000;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: transform 0.2s ease;
+        }
+        .buy-btn:hover {
+            transform: scale(1.03);
+        }
     </style>
 </head>
 <body>
 
-    <!-- LOADING -->
-    <div class="loading" id="layarLoading">
-        <h1>✨ Kazuki Store</h1>
-        <div class="ring"></div>
-        <p>Memuat...</p>
+    <!-- === LOADING SCREEN KEREN === -->
+    <div class="loading-screen" id="layarLoading">
+        <div class="loading-logo">KAZUKI STORE</div>
+        <div class="loading-spinner">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <p class="loading-text">Memuat<span class="loading-dots"></span></p>
     </div>
 
-    <!-- KONTEN UTAMA -->
-    <div class="wrap" id="kontenUtama">
-        <div class="top-bar">
-            <h2>✨ Kazuki Store</h2>
-            <button class="keluar" onclick="keluar()">Keluar</button>
-        </div>
+    <!-- === HALAMAN LOGIN === -->
+    <div class="auth-page" id="halamanLogin">
+        <div class="auth-card">
+            <h1 class="auth-title">✨ KAZUKI STORE</h1>
+            <p class="auth-subtitle">Silakan masuk untuk melanjutkan</p>
 
-        <div class="profil">
-            <img src="https://c.termai.cc/i152/cQu5Lx.jpg" alt="Profil" 
-                 onerror="this.src='https://via.placeholder.com/130/e3f2fd/1565c0?text=👤'">
-            <h3>Kazuki Store</h3>
-            <p>Belanja Mudah & Terpercaya</p>
-        </div>
+            <div class="login-alert">
+                ⚠️ Silakan login terlebih dahulu
+            </div>
 
-        <div class="card produk">
-            <div class="ikon">🎁</div>
-            <h4>Produk Pilihan</h4>
-            <div class="harga">Rp 50.000</div>
-        </div>
+            <!-- TOMBOL SOSIAL -->
+            <button class="social-btn" onclick="alert('Fitur Google akan segera hadir! Gunakan Email dulu ya 😊')">
+                <span class="google-icon"></span>
+                Masuk dengan Google
+            </button>
 
-        <div class="card">
-            <label>Nama Produk</label>
-            <input type="text" id="namaProduk" value="Produk Kazuki Store">
-            
-            <label>Harga (Rp)</label>
-            <input type="number" id="hargaProduk" value="50000">
-            
-            <label>Nama Pembeli</label>
-            <input type="text" id="namaPembeli" placeholder="Masukkan nama kamu">
-            
-            <label>Email Pembeli</label>
-            <input type="email" id="emailPembeli" placeholder="email@contoh.com">
-            
-            <button class="btn" id="btnBayar" onclick="buatPembayaran()">💳 Buat Pembayaran</button>
-            <div class="pesan" id="kotakPesan"></div>
-        </div>
+            <button class="social-btn" onclick="alert('Fitur Facebook akan segera hadir!')">
+                <span>🔵</span>
+                Masuk dengan Facebook
+            </button>
 
-        <footer>© 2026 Kazuki Store • Semua Hak Dilindungi</footer>
-    </div>
+            <button class="social-btn" onclick="alert('Fitur Discord akan segera hadir!')">
+                <span>🟣</span>
+                Masuk dengan Discord
+            </button>
 
-    <script>
-        // HILANGIN LOADING PASTI JALAN!
-        window.onload = function() {
-            setTimeout(function() {
-                document.getElementById('layarLoading').classList.add('hide');
-                document.getElementById('kontenUtama').classList.add('show');
-            }, 1200);
-        };
+            <div class="divider">
+                <div class="divider-line"></div>
+                <span class="divider-text">atau</span>
+                <div class="divider-line"></div>
+            </div>
 
-        function keluar() {
-            if(confirm('Yakin mau keluar?')) location.reload();
-        }
+            <!-- FORM LOGIN -->
+            <div id="formLogin">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="emailLogin" placeholder="email@contoh.com">
+                </div>
+                <div class="form-group">
+                    <label>Kata Sandi</label>
+                    <input type="password" id="passLogin" placeholder="Masukkan kata sandi">
+                </div>
+                <button class="main-btn" onclick="masuk()">Masuk</button>
+                <div class="message-box" id="pesanLogin"></div>
+                <p class="switch-auth">Belum punya akun? <a onclick="gantiForm('daftar')">Daftar di sini</a></p>
+            </div>
 
-        function tampilPesan(jenis, teks) {
-            const el = document.getElementById('kotakPesan');
-            el.className = 'pesan tampil ' + jenis;
-            el.innerHTML = teks;
-        }
-
-        async function buatPembayaran() {
-            const btn = document.getElementById('btnBayar');
-            const namaPembeli = document.getElementById('namaPembeli').value.trim();
-            const emailPembeli = document.getElementById('emailPembeli').value.trim();
-            const namaProduk = document.getElementById('namaProduk').value.trim();
-            const harga = parseInt(document.getElementById('hargaProduk').value);
-
-            if (!namaPembeli || !emailPembeli) {
-                tampilPesan('gagal', '⚠️ Isi nama & email dulu!');
-                return;
-            }
-
-            btn.disabled = true;
-            btn.innerHTML = '⏳ Memproses...';
-            tampilPesan('info', '⏳ Sedang membuat pesanan...');
-
-            try {
-                const res = await fetch('/api/create-payment', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        amount: harga,
-                        productName: namaProduk,
-                        buyerName: namaPembeli,
-                        buyerEmail: emailPembeli
-                    })
-                });
-
-                const data = await res.json();
-                
-                if (data.paymentUrl) {
-                    tampilPesan('sukses', `✅ Berhasil! No. Pesanan: <strong>${data.merchantOrderId}</strong><br>
-                    <a href="${data.paymentUrl}" target="_blank">👉 Klik di sini untuk membayar</a>`);
-                } else {
-                    tampilPesan('gagal', '❌ Gagal: ' + (data.error || 'Coba lagi nanti'));
-                }
-            } catch (err) {
-                tampilPesan('gagal', '❌ Kesalahan jaringan. Coba lagi ya!');
-            }
-
-            btn.disabled = false;
-            btn.innerHTML = '💳 Buat Pembayaran';
-        }
-    </script>
-</body>
-</html>
+            <!-- FORM DAFTAR -->
+            <div id="formDaftar" style="display: none;">
+                <div class="form-group">
+                    <label>Nama Lengkap</label>
+                    <input type="text" id="namaDaftar" placeholder="Nama kamu">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="emailDaftar" placeholder="
