@@ -1,14 +1,6 @@
 {
-  "name": "kazuki-store",
+  "name": "toko-online",
   "version": "1.0.0",
-  "description": "Toko Top Up Game + Akun + Jasa + APK Premium",
-  "main": "index.html",
-  "scripts": {
-    "dev": "npx serve .",
-    "start": "npx serve ."
-  },
-  "dependencies": {},
-  "keywords": ["topup", "game", "store", "pakasir"],
-  "author": "KAZUKI",
-  "license": "MIT"
+  "private": true,
+  "engines": { "node": ">=18" }
 }
