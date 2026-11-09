@@ -1,386 +1,212 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KAZUKI STORE</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: { extend: { colors: { primary: '#6366F1', card: '#1E293B', success: '#10B981', danger: '#EF4444', darker: '#0F172A' } } }
-        }
-    </script>
-    <style>
-        * { scroll-behavior: smooth; }
-        body { background: linear-gradient(135deg, #0F172A 0%, #1E1B4B 50%, #0F172A 100%); min-height: 100vh; }
-        .text-gradient { background: linear-gradient(90deg, #6366F1, #EC4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .page { display: block; }
-        .page.hidden { display: none !important; }
-        .card-hover { transition: all 0.3s ease; }
-        .card-hover:hover { transform: translateY(-5px); border-color: rgba(99,102,241,0.4); box-shadow: 0 15px 35px rgba(99,102,241,0.15); }
-        .nominal-btn.selected { border-color: #6366F1; background: rgba(99,102,241,0.15); }
-        .btn-primary { background: linear-gradient(90deg, #6366F1, #8B5CF6); transition: all 0.3s ease; }
-        .btn-primary:hover { transform: scale(1.02); box-shadow: 0 0 20px rgba(99,102,241,0.35); }
-        .btn-primary:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
-        .btn-wa { background: linear-gradient(90deg, #22C55E, #16A34A); }
-        input, select { transition: all 0.25s ease; }
-        input:focus, select:focus { outline: none; border-color: #6366F1; box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
-        .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(30px); background: rgba(15,23,42,0.95); border: 1px solid rgba(99,102,241,0.3); color: white; padding: 0.875rem 1.5rem; border-radius: 0.75rem; z-index: 100; opacity: 0; transition: all 0.3s ease; }
-        .toast-show { opacity: 1; transform: translateX(-50%) translateY(0); }
-        .glass { background: rgba(30,41,59,0.6); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05); }
-        
-        /* LOADING SCREEN */
-        .loading-screen {
-            position: fixed; inset: 0; z-index: 9999;
-            background: rgba(0,0,0,0.7); backdrop-filter: blur(6px);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            opacity: 0; visibility: hidden; transition: all 0.3s ease;
-        }
-        .loading-active { opacity: 1; visibility: visible; }
-        .spinner {
-            width: 50px; height: 50px; border: 3px solid rgba(99,102,241,0.15);
-            border-top-color: #6366F1; border-radius: 50%; animation: spin 0.8s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .pulse-dot {
-            display: inline-block; animation: pulse 1.4s infinite both;
-        }
-        .pulse-dot:nth-child(2) { animation-delay: 0.2s; }
-        .pulse-dot:nth-child(3) { animation-delay: 0.4s; }
-        @keyframes pulse {
-            0% { opacity: 0.2; }
-            20% { opacity: 1; }
-            100% { opacity: 0.2; }
-        }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b0d14">
+<title>Kazuki Store - Top Up Game & Akun Premium</title>
+<style>
+:root{--bg:#0b0d14;--card:#151823;--line:#232838;--tx:#eef0f6;--mut:#8b93a8;--pri:#5b7cff;--pri2:#8a5bff;--ok:#2fd18b;--err:#ff6b6b}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--tx)}
+.wrap{max-width:960px;margin:auto;padding:0 16px}
+header{position:sticky;top:0;z-index:5;background:rgba(11,13,20,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+header .wrap{display:flex;align-items:center;gap:10px;height:56px}
+.logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--pri),var(--pri2));display:grid;place-items:center;font-weight:800}
+header b{flex:1;font-size:17px}header a{color:var(--mut);font-size:14px;text-decoration:none}
+.hero{padding:28px 0 8px}.hero h1{font-size:26px;line-height:1.25;margin:0 0 8px}
+.hero p{color:var(--mut);margin:0 0 14px}
+.badges{display:flex;flex-wrap:wrap;gap:8px}.badges span{font-size:12px;padding:6px 10px;border:1px solid var(--line);border-radius:99px;color:var(--mut)}
+.tabs{display:flex;gap:8px;padding:16px 0;overflow-x:auto}
+.tab{padding:9px 16px;border-radius:99px;border:1px solid var(--line);background:var(--card);color:var(--mut);font-size:14px;white-space:nowrap;cursor:pointer}
+.tab.on{background:var(--pri);border-color:var(--pri);color:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;padding-bottom:24px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;cursor:pointer;transition:.15s}
+.card:hover{border-color:var(--pri);transform:translateY(-2px)}
+.ic{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-weight:800;margin-bottom:10px}
+.card h3{font-size:14px;margin:0 0 6px;font-weight:600;min-height:36px}.card .pr{font-weight:700;color:#fff}.card small{color:var(--mut)}
+.sk{height:132px;border-radius:14px;background:linear-gradient(90deg,var(--card) 25%,#1d2132 50%,var(--card) 75%);background-size:200% 100%;animation:sh 1.2s infinite}
+@keyframes sh{to{background-position:-200% 0}}
+.how{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;padding:8px 0 28px}
+.how div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;font-size:14px;color:var(--mut)}
+.how b{display:block;color:var(--tx);margin-bottom:4px}
+footer{border-top:1px solid var(--line);padding:20px 0 calc(28px + env(safe-area-inset-bottom));color:var(--mut);font-size:13px;text-align:center}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.65);display:flex;align-items:flex-end;justify-content:center;z-index:10}
+.ov[hidden]{display:none}
+.sheet{background:var(--card);width:100%;max-width:460px;border-radius:20px 20px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom));max-height:92vh;overflow:auto;animation:up .25s}
+@keyframes up{from{transform:translateY(40px);opacity:0}}
+@media(min-width:600px){.ov{align-items:center}.sheet{border-radius:20px}}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.top h2{margin:0;font-size:18px}
+.x{background:none;border:0;color:var(--mut);font-size:24px;cursor:pointer}
+.sum{display:flex;justify-content:space-between;gap:10px;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:12px;font-size:14px}
+label{display:block;font-size:13px;color:var(--mut);margin:10px 0 4px}
+input{width:100%;padding:13px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--tx);font-size:16px}
+input:focus{outline:0;border-color:var(--pri)}
+.btn{width:100%;margin-top:16px;padding:14px;border:0;border-radius:12px;background:linear-gradient(135deg,var(--pri),var(--pri2));color:#fff;font-size:16px;font-weight:700;cursor:pointer;display:flex;justify-content:center;align-items:center;gap:10px}
+.btn:disabled{opacity:.7;cursor:wait}
+.spin{width:18px;height:18px;border:3px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:r .7s linear infinite}
+.spin.big{width:26px;height:26px;border-color:var(--line);border-top-color:var(--pri)}
+@keyframes r{to{transform:rotate(360deg)}}
+.err{color:var(--err);font-size:13px;margin-top:10px;min-height:16px}
+.c{text-align:center}.qr{background:#fff;border-radius:14px;padding:10px;width:240px;max-width:100%;margin:10px auto}
+.qr img{width:100%;display:block}.tot{font-size:24px;font-weight:800;margin:6px 0}
+.wait{display:flex;gap:10px;align-items:center;justify-content:center;color:var(--mut);font-size:14px;margin-top:10px}
+.cd{color:var(--tx);font-weight:700}.ck{width:72px;height:72px;border-radius:50%;background:var(--ok);display:grid;place-items:center;font-size:38px;margin:10px auto;animation:pop .4s}
+@keyframes pop{from{transform:scale(.3);opacity:0}}
+.mono{font-family:ui-monospace,monospace;color:var(--mut);font-size:13px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#2a1d1f;border:1px solid var(--err);color:#ffb4b4;padding:10px 16px;border-radius:10px;font-size:14px;z-index:20}
+</style>
 </head>
-<body class="text-gray-100 min-h-screen">
+<body>
+<header><div class="wrap"><div class="logo" id="lg">N</div><b id="nm">NamaToko</b><a id="cs" target="_blank" rel="noopener">Bantuan</a></div></header>
 
-<!-- LOADING SCREEN -->
-<div id="loadingScreen" class="loading-screen">
-    <div class="spinner mb-4"></div>
-    <p id="loadingText" class="text-white font-medium">Sedang memproses<span class="pulse-dot">.</span><span class="pulse-dot">.</span><span class="pulse-dot">.</span></p>
-</div>
+<main class="wrap">
+  <section class="hero">
+    <h1>Top Up Game & Akun Premium<br>Cepat, Aman, Otomatis</h1>
+    <p>Bayar pakai QRIS dari semua e-wallet & m-banking. Pesanan diproses otomatis 24 jam.</p>
+    <div class="badges"><span>⚡ Proses otomatis</span><span>🔒 Pembayaran aman</span><span>🕒 Buka 24 jam</span></div>
+  </section>
+  <div class="tabs" id="tabs"></div>
+  <div class="grid" id="grid"></div>
+  <div class="how">
+    <div><b>1. Pilih produk</b>Pilih nominal atau paket yang kamu mau.</div>
+    <div><b>2. Isi data</b>Masukkan ID game atau email tujuan dengan benar.</div>
+    <div><b>3. Bayar QRIS</b>Scan, bayar, dan pesanan langsung diproses.</div>
+  </div>
+</main>
+<footer><div class="wrap">© <span id="yr"></span> <span id="nm2"></span> · Pastikan data tujuan sudah benar. Kesalahan input bukan tanggung jawab kami.</div></footer>
 
-<!-- NAVBAR -->
-<header class="sticky top-0 z-50 glass border-b border-gray-800/50">
-    <div class="container mx-auto px-4 py-3 flex items-center justify-between">
-        <a href="#" onclick="showPage('home')" class="text-xl font-bold text-gradient">🎮 KAZUKI</a>
-        <nav class="hidden md:flex gap-4">
-            <a href="#" onclick="showPage('home')" class="px-3 py-2 hover:text-primary">Beranda</a>
-            <a href="#" onclick="showPage('topup')" class="px-3 py-2 hover:text-primary">💎 Top Up</a>
-            <a href="#" onclick="showPage('akun')" class="px-3 py-2 hover:text-primary">🏆 Akun</a>
-            <a href="#" onclick="showPage('jasa')" class="px-3 py-2 hover:text-primary">⚡ Jasa</a>
-        </nav>
-        <button class="md:hidden text-xl" onclick="toggleMenu()"><i class="fa fa-bars"></i></button>
+<div class="ov" id="ov" hidden>
+  <div class="sheet">
+    <div class="top"><h2 id="ttl">Checkout</h2><button class="x" id="cl" aria-label="Tutup">×</button></div>
+
+    <form id="f">
+      <div class="sum"><span id="sn"></span><b id="sp"></b></div>
+      <label id="lt">ID tujuan</label><input id="target" required maxlength="60" autocomplete="off">
+      <label>Nama</label><input id="name" required maxlength="50" autocomplete="name">
+      <label>No. WhatsApp</label><input id="phone" required inputmode="tel" maxlength="20" autocomplete="tel">
+      <label>Email</label><input id="email" type="email" required maxlength="80" autocomplete="email">
+      <div class="err" id="msg"></div>
+      <button class="btn" id="btn"><span>Lanjut Bayar</span></button>
+    </form>
+
+    <div id="pay" class="c" hidden>
+      <div>Total pembayaran</div><div class="tot" id="tot"></div>
+      <div class="qr"><img id="qr" alt="QRIS"></div>
+      <div class="mono" id="ref"></div>
+      <div class="wait"><div class="spin big"></div><span>Menunggu pembayaran · sisa <span class="cd" id="cd">--:--</span></span></div>
+      <p style="font-size:13px;color:var(--mut)">Buka e-wallet atau m-banking, scan QR di atas. Jangan tutup halaman ini.</p>
     </div>
-</header>
 
-<!-- Mobile Menu -->
-<div id="mobileMenu" class="fixed inset-0 z-[60] hidden">
-    <div class="absolute inset-0 bg-black/70" onclick="toggleMenu()"></div>
-    <div class="absolute right-0 top-0 bottom-0 w-64 glass border-l border-gray-800 p-5">
-        <div class="flex justify-between items-center mb-6">
-            <span class="text-lg font-bold text-gradient">Menu</span>
-            <button onclick="toggleMenu()"><i class="fa fa-times"></i></button>
-        </div>
-        <nav class="space-y-2">
-            <a href="#" onclick="showPage('home'); toggleMenu()" class="block py-2">Beranda</a>
-            <a href="#" onclick="showPage('topup'); toggleMenu()" class="block py-2">💎 Top Up</a>
-            <a href="#" onclick="showPage('akun'); toggleMenu()" class="block py-2">🏆 Akun</a>
-            <a href="#" onclick="showPage('jasa'); toggleMenu()" class="block py-2">⚡ Jasa Push</a>
-        </nav>
+    <div id="done" class="c" hidden>
+      <div class="ck" id="dk">✓</div><h2 id="dt">Pembayaran berhasil</h2>
+      <p style="color:var(--mut)" id="dm">Pesananmu sedang diproses otomatis.</p>
+      <div class="mono" id="dr"></div>
+      <button class="btn" id="dc"><span>Selesai</span></button>
     </div>
-</div>
-
-<!-- BERANDA -->
-<section id="page-home" class="page">
-    <div class="container mx-auto px-4 pt-10 pb-20">
-        <div class="text-center py-16">
-            <h1 class="text-4xl md:text-5xl font-bold mb-4"><span class="text-gradient">KAZUKI STORE</span></h1>
-            <p class="text-gray-400 text-lg mb-10">Top Up Game Cepat & Aman — Powered by Nofbox API</p>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
-                <button onclick="showPage('topup')" class="p-6 bg-gray-800/50 border border-gray-700 rounded-xl card-hover">
-                    <span class="text-3xl">💎</span><p class="mt-2 font-medium">Top Up</p>
-                </button>
-                <button onclick="showPage('akun')" class="p-6 bg-gray-800/50 border border-gray-700 rounded-xl card-hover">
-                    <span class="text-3xl">🏆</span><p class="mt-2 font-medium">Akun</p>
-                </button>
-                <button onclick="showPage('jasa')" class="p-6 bg-gray-800/50 border border-gray-700 rounded-xl card-hover">
-                    <span class="text-3xl">⚡</span><p class="mt-2 font-medium">Push Rank</p>
-                </button>
-                <button onclick="window.open('https://wa.me/6287733976909','_blank')" class="p-6 bg-gray-800/50 border border-gray-700 rounded-xl card-hover">
-                    <span class="text-3xl">💬</span><p class="mt-2 font-medium">Bantuan</p>
-                </button>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- TOP UP -->
-<section id="page-topup" class="page hidden">
-    <div class="container mx-auto px-4 pt-10 pb-20">
-        <div class="text-center mb-10">
-            <h2 class="text-3xl font-bold mb-2">💎 Top Up Game</h2>
-            <p class="text-gray-400">Masukkan data & pilih nominal</p>
-        </div>
-        <div class="max-w-lg mx-auto bg-gray-800/50 border border-gray-700 rounded-xl p-6 space-y-5">
-            <div>
-                <label class="block text-sm font-medium mb-2">🎮 Pilih Game</label>
-                <select id="gameSelect" class="w-full px-4 py-3 rounded-lg bg-darker border border-gray-700">
-                    <option value="mlbb">Mobile Legends — Diamond</option>
-                    <option value="ff">Free Fire — Diamond</option>
-                    <option value="pubg">PUBG Mobile — UC</option>
-                    <option value="genshin">Genshin Impact — Genesis Crystal</option>
-                </select>
-            </div>
-            <div>
-                <label class="block text-sm font-medium mb-2">👤 User ID</label>
-                <input type="text" id="userId" placeholder="Masukkan User ID" class="w-full px-4 py-3 rounded-lg bg-darker border border-gray-700">
-            </div>
-            <div>
-                <label class="block text-sm font-medium mb-2">📍 Zone / Server ID</label>
-                <input type="text" id="zoneId" placeholder="Kosongkan jika tidak ada" class="w-full px-4 py-3 rounded-lg bg-darker border border-gray-700">
-            </div>
-            <div>
-                <label class="block text-sm font-medium mb-2">💰 Pilih Nominal</label>
-                <div class="grid grid-cols-3 gap-3">
-                    <button onclick="selectNominal(this, 5000, '70 💎')" class="nominal-btn p-3 border border-gray-700 rounded-lg">
-                        <div>70 💎</div><div class="text-sm text-primary">Rp 5.000</div>
-                    </button>
-                    <button onclick="selectNominal(this, 15000, '250 💎')" class="nominal-btn p-3 border border-gray-700 rounded-lg">
-                        <div>250 💎</div><div class="text-sm text-primary">Rp 15.000</div>
-                    </button>
-                    <button onclick="selectNominal(this, 50000, '1000 💎')" class="nominal-btn p-3 border border-gray-700 rounded-lg">
-                        <div>1000 💎</div><div class="text-sm text-primary">Rp 50.000</div>
-                    </button>
-                    <button onclick="selectNominal(this, 100000, '2000 💎')" class="nominal-btn p-3 border border-gray-700 rounded-lg">
-                        <div>2000 💎</div><div class="text-sm text-primary">Rp 100.000</div>
-                    </button>
-                    <button onclick="selectNominal(this, 250000, '5500 💎')" class="nominal-btn p-3 border border-gray-700 rounded-lg">
-                        <div>5500 💎</div><div class="text-sm text-primary">Rp 250.000</div>
-                    </button>
-                    <button onclick="selectNominal(this, 500000, '12000 💎')" class="nominal-btn p-3 border border-gray-700 rounded-lg">
-                        <div>12000 💎</div><div class="text-sm text-primary">Rp 500.000</div>
-                    </button>
-                </div>
-                <p class="text-sm text-gray-400 mt-2">Terpilih: <span id="nominalText" class="text-primary">Belum memilih</span></p>
-            </div>
-            <button id="btnPesan" onclick="buatPesanan()" class="w-full py-3 btn-primary text-white font-semibold rounded-lg">
-                <i class="fa fa-bolt mr-2"></i> Buat Pesanan
-            </button>
-        </div>
-    </div>
-</section>
-
-<!-- AKUN -->
-<section id="page-akun" class="page hidden">
-    <div class="container mx-auto px-4 pt-10 pb-20">
-        <div class="text-center mb-10">
-            <h2 class="text-3xl font-bold mb-2">🏆 Jual Akun Game</h2>
-            <p class="text-gray-400">Dijamin Aman ✅</p>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-            <div class="bg-gray-800/50 border border-gray-700 rounded-xl p-5 card-hover">
-                <h3 class="font-semibold">Akun MLBB Mythic</h3>
-                <p class="text-gray-400 text-sm mt-1">Semua hero • 80+ skin</p>
-                <p class="text-xl font-bold text-success mt-3">Rp 450.000</p>
-                <button onclick="pesanWA('Akun MLBB Mythic', 450000)" class="w-full mt-3 py-2 btn-wa text-white rounded-lg">Pesan WA</button>
-            </div>
-            <div class="bg-gray-800/50 border border-gray-700 rounded-xl p-5 card-hover">
-                <h3 class="font-semibold">Akun FF Lengkap</h3>
-                <p class="text-gray-400 text-sm mt-1">Level 65 • Banyak skin</p>
-                <p class="text-xl font-bold text-success mt-3">Rp 350.000</p>
-                <button onclick="pesanWA('Akun FF Lengkap', 350000)" class="w-full mt-3 py-2 btn-wa text-white rounded-lg">Pesan WA</button>
-            </div>
-            <div class="bg-gray-800/50 border border-gray-700 rounded-xl p-5 card-hover">
-                <h3 class="font-semibold">Akun Genshin AR58</h3>
-                <p class="text-gray-400 text-sm mt-1">15+ Bintang 5</p>
-                <p class="text-xl font-bold text-success mt-3">Rp 1.800.000</p>
-                <button onclick="pesanWA('Akun Genshin AR58', 1800000)" class="w-full mt-3 py-2 btn-wa text-white rounded-lg">Pesan WA</button>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- JASA PUSH -->
-<section id="page-jasa" class="page hidden">
-    <div class="container mx-auto px-4 pt-10 pb-20">
-        <div class="text-center mb-10">
-            <h2 class="text-3xl font-bold mb-2">⚡ Jasa Push Rank MLBB</h2>
-            <p class="text-gray-400">Pro Player — Aman & Cepat</p>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-            <div class="bg-gray-800/50 border border-gray-700 rounded-xl p-5 card-hover">
-                <h3 class="font-semibold">Warrior → Master</h3>
-                <p class="text-xl font-bold text-success mt-3">Rp 35.000</p>
-                <button onclick="pesanWA('Push Warrior ke Master', 35000)" class="w-full mt-3 py-2 btn-wa text-white rounded-lg">Pesan WA</button>
-            </div>
-            <div class="bg-gray-800/50 border border-gray-700 rounded-xl p-5 card-hover">
-                <h3 class="font-semibold">Master → GM</h3>
-                <p class="text-xl font-bold text-success mt-3">Rp 65.000</p>
-                <button onclick="pesanWA('Push Master ke GM', 65000)" class="w-full mt-3 py-2 btn-wa text-white rounded-lg">Pesan WA</button>
-            </div>
-            <div class="bg-gray-800/50 border border-gray-700 rounded-xl p-5 card-hover">
-                <h3 class="font-semibold">GM → Mythic</h3>
-                <p class="text-xl font-bold text-success mt-3">Rp 120.000</p>
-                <button onclick="pesanWA('Push GM ke Mythic', 120000)" class="w-full mt-3 py-2 btn-wa text-white rounded-lg">Pesan WA</button>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- FOOTER -->
-<footer class="glass border-t border-gray-800 py-8 mt-12">
-    <div class="container mx-auto px-4 text-center">
-        <h3 class="text-xl font-bold text-gradient mb-2">KAZUKI STORE</h3>
-        <p class="text-gray-400 text-sm mb-4">Top Up Game • Jual Akun • Jasa Push Rank</p>
-        <a href="https://wa.me/6287733976909" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 btn-wa text-white rounded-lg">
-            <i class="fa fa-whatsapp"></i> Hubungi Kami
-        </a>
-        <p class="text-gray-500 text-xs mt-6">© 2026 KAZUKI STORE. Powered by Nofbox API.</p>
-    </div>
-</footer>
-
-<!-- TOAST -->
-<div id="toast" class="toast">
-    <span id="toastMsg">Berhasil!</span>
+  </div>
 </div>
 
 <script>
-// ========== ISI DATA KAMU DISINI =========
-const NOFBOX_APP_ID = "briagviq";
-const NOFBOX_API_KEY = "briagviaqniunuy7kgbriagvizcbm3noajzm"; // Ganti ini
-const NOMOR_WA = "6287733976909"; // Ganti nomor WA kamu
-// ==========================================
+const STORE = { name: 'Kazuki Store', wa: '6287733976909' }; // GANTI nama toko & nomor WhatsApp CS
+const $ = s => document.querySelector(s);
+const rp = n => 'Rp' + Number(n).toLocaleString('id-ID');
+const COL = ['#5b7cff','#8a5bff','#ff7a59','#2fd18b','#f5b83d','#ff5fa2'];
+let products = [], cat = 'all', sel = null, poll = null, tick = null;
 
-// ========== LOADING SCREEN CONTROL ==========
-function showLoading(teks = "Sedang memproses") {
-    document.getElementById("loadingText").textContent = teks + "<span class='pulse-dot'>.</span><span class='pulse-dot'>.</span><span class='pulse-dot'>.</span>";
-    document.getElementById("loadingScreen").classList.add("loading-active");
+document.title = Kazuki Store + ' - Top Up Game & Akun Premium';
+$('#nm').textContent = $('#nm2').textContent = STORE.name; $('#lg').textContent = STORE.name[0];
+$('#yr').textContent = new Date().getFullYear();
+$('#cs').href = 'https://wa.me/' + STORE.wa;
+
+function toast(t) { const e = document.createElement('div'); e.className = 'toast'; e.textContent = t; document.body.append(e); setTimeout(() => e.remove(), 3500); }
+
+function skeleton() { $('#grid').innerHTML = '<div class="sk"></div>'.repeat(6); }
+
+function load() {
+  skeleton();
+  fetch('/api/products').then(r => { if (!r.ok) throw 0; return r.json(); })
+    .then(d => { products = d; tabs(); show(); })
+    .catch(() => { $('#grid').innerHTML = ''; const b = document.createElement('button'); b.className = 'btn'; b.textContent = 'Gagal memuat produk. Coba lagi'; b.onclick = load; $('#grid').append(b); });
 }
 
-function hideLoading() {
-    document.getElementById("loadingScreen").classList.remove("loading-active");
+function tabs() {
+  const names = { all: 'Semua', game: 'Top Up Game', akun: 'Akun Premium' };
+  const keys = ['all', ...new Set(products.map(p => p.cat))];
+  $('#tabs').innerHTML = '';
+  keys.forEach(k => {
+    const t = document.createElement('div'); t.className = 'tab' + (k === cat ? ' on' : ''); t.textContent = names[k] || k;
+    t.onclick = () => { cat = k; tabs(); show(); }; $('#tabs').append(t);
+  });
 }
 
-// ========== NAVIGASI ==========
-function showPage(nama) {
-    document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
-    const halaman = document.getElementById(`page-${nama}`);
-    if (halaman) halaman.classList.remove('hidden');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+function show() {
+  $('#grid').innerHTML = '';
+  products.filter(p => cat === 'all' || p.cat === cat).forEach((p, i) => {
+    const c = document.createElement('div'); c.className = 'card';
+    c.innerHTML = '<div class="ic"></div><h3></h3><div class="pr"></div><small></small>';
+    const ic = c.querySelector('.ic'); ic.textContent = p.name[0]; ic.style.background = COL[i % COL.length];
+    c.querySelector('h3').textContent = p.name; c.querySelector('.pr').textContent = rp(p.price);
+    c.querySelector('small').textContent = p.cat === 'game' ? 'Proses otomatis' : 'Pengiriman otomatis';
+    c.onclick = () => open(p); $('#grid').append(c);
+  });
 }
 
-function toggleMenu() {
-    document.getElementById('mobileMenu').classList.toggle('hidden');
+function view(v) { $('#f').hidden = v !== 'f'; $('#pay').hidden = v !== 'pay'; $('#done').hidden = v !== 'done'; }
+
+function open(p) {
+  sel = p; view('f'); $('#ttl').textContent = 'Checkout'; $('#msg').textContent = '';
+  $('#sn').textContent = p.name; $('#sp').textContent = rp(p.price);
+  $('#lt').textContent = p.cat === 'game' ? 'ID game (+ server jika ada)' : 'Email akun tujuan';
+  $('#ov').hidden = false;
 }
 
-// ========== TOAST NOTIFIKASI ==========
-function tampilToast(pesan) {
-    const t = document.getElementById('toast');
-    document.getElementById('toastMsg').textContent = pesan;
-    t.classList.add('toast-show');
-    setTimeout(() => t.classList.remove('toast-show'), 3000);
-}
+function stop() { clearInterval(poll); clearInterval(tick); }
+function close() { stop(); $('#ov').hidden = true; $('#btn').disabled = false; $('#btn').innerHTML = '<span>Lanjut Bayar</span>'; }
+$('#cl').onclick = () => { if (!$('#pay').hidden && !confirm('Pesanan menunggu pembayaran. Tutup halaman ini?')) return; close(); };
+$('#dc').onclick = close;
 
-// ========== PILIH NOMINAL ==========
-let hargaTerpilih = 0, labelTerpilih = '';
-function selectNominal(btn, harga, label) {
-    document.querySelectorAll('.nominal-btn').forEach(b => b.classList.remove('selected'));
-    btn.classList.add('selected');
-    hargaTerpilih = harga;
-    labelTerpilih = label;
-    document.getElementById('nominalText').textContent = `${label} — Rp ${harga.toLocaleString('id-ID')}`;
-}
+$('#f').onsubmit = async e => {
+  e.preventDefault(); $('#msg').textContent = ''; $('#btn').disabled = true;
+  $('#btn').innerHTML = '<div class="spin"></div><span>Memproses...</span>';
+  try {
+    const r = await fetch('/api/create-order', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ productId: sel.id, target: $('#target').value, name: $('#name').value, phone: $('#phone').value, email: $('#email').value }) });
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.error || 'Gagal membuat pesanan');
+    pay(j);
+  } catch (err) {
+    $('#msg').textContent = err.message; $('#btn').disabled = false; $('#btn').innerHTML = '<span>Lanjut Bayar</span>';
+  }
+};
 
-// ========== PESAN VIA WHATSAPP ==========
-function pesanWA(nama, harga) {
-    showLoading("Membuka WhatsApp");
-    setTimeout(() => {
-        const teks = encodeURIComponent(`Halo Kak! Mau pesan:%0A📦 ${nama}%0A💰 Harga: Rp${harga.toLocaleString('id-ID')}`);
-        window.open(`https://wa.me/${NOMOR_WA}?text=${teks}`, '_blank');
-        hideLoading();
-        tampilToast('WhatsApp terbuka ✅');
-    }, 600);
-}
-
-// ========== BUAT PESANAN TOP UP ==========
-async function buatPesanan() {
-    const game = document.getElementById('gameSelect').value;
-    const uid = document.getElementById('userId').value.trim();
-    const zone = document.getElementById('zoneId').value.trim();
-    const btn = document.getElementById('btnPesan');
-
-    // Validasi
-    if (!uid) return tampilToast('Masukkan User ID dulu! ⚠️');
-    if (hargaTerpilih === 0) return tampilToast('Pilih nominal dulu! ⚠️');
-
-    // Kalau API belum diisi → WhatsApp
-    if (!NOFBOX_API_KEY || NOFBOX_API_KEY.includes('ISI-KUNCI')) {
-        showLoading("Mengalihkan ke WhatsApp");
-        setTimeout(() => {
-            const teks = encodeURIComponent(
-                `Halo Kak! Mau Top Up 🎮%0A%0AGame: ${game.toUpperCase()}%0AUser ID: ${uid}%0AZone: ${zone || '-'}%0ANominal: ${labelTerpilih} — Rp ${hargaTerpilih.toLocaleString('id-ID')}`
-            );
-            window.open(`https://wa.me/${NOMOR_WA}?text=${teks}`, '_blank');
-            hideLoading();
-            tampilToast('Silakan lanjutkan di WhatsApp ✅');
-        }, 800);
-        return;
-    }
-
-    // Kalau API sudah diisi → Panggil Nofbox API
+function pay(j) {
+  view('pay'); $('#ttl').textContent = 'Pembayaran QRIS';
+  $('#tot').textContent = rp(j.total); $('#qr').src = j.qr_url; $('#ref').textContent = 'No. pesanan ' + j.reference;
+  const end = (j.expired_time || (Date.now() / 1000 + 1800)) * 1000;
+  tick = setInterval(() => {
+    const s = Math.max(0, Math.floor((end - Date.now()) / 1000));
+    $('#cd').textContent = String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+    if (!s) finish(j, false);
+  }, 1000);
+  poll = setInterval(async () => {
     try {
-        btn.disabled = true;
-        showLoading("Membuat pesanan");
-        
-        const res = await fetch('https://api.nofbox.com/v1/order/create', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-App-ID': NOFBOX_APP_ID,
-                'X-API-Key': NOFBOX_API_KEY
-            },
-            body: JSON.stringify({
-                game: game,
-                user_id: uid,
-                zone_id: zone,
-                amount: hargaTerpilih
-            })
-        });
-
-        const data = await res.json();
-        hideLoading();
-        btn.disabled = false;
-
-        if (data.success) {
-            tampilToast('✅ Pesanan berhasil!');
-            if (data.payment_url) {
-                showLoading("Membuka pembayaran");
-                setTimeout(() => {
-                    window.open(data.payment_url, '_blank');
-                    hideLoading();
-                }, 600);
-            }
-        } else {
-            tampilToast('❌ ' + (data.message || 'Gagal membuat pesanan'));
-        }
-    } catch (err) {
-        hideLoading();
-        btn.disabled = false;
-        tampilToast('⚠️ Error — beralih ke WhatsApp');
-        setTimeout(() => {
-            const teks = encodeURIComponent(
-                `Halo Kak! Mau Top Up 🎮%0AGame: ${game.toUpperCase()}%0AUser ID: ${uid}%0AZone: ${zone || '-'}%0ANominal: ${labelTerpilih} — Rp ${hargaTerpilih.toLocaleString('id-ID')}`
-            );
-            window.open(`https://wa.me/${NOMOR_WA}?text=${teks}`, '_blank');
-        }, 1000);
-    }
+      const s = await (await fetch('/api/status?ref=' + j.reference)).json();
+      if (s.status === 'PAID') finish(j, true);
+      if (s.status === 'EXPIRED' || s.status === 'FAILED') finish(j, false);
+    } catch (_) {}
+  }, 4000);
 }
-</script>
 
+function finish(j, ok) {
+  stop(); view('done'); $('#ttl').textContent = 'Status Pesanan';
+  $('#dk').textContent = ok ? '✓' : '!'; $('#dk').style.background = ok ? 'var(--ok)' : 'var(--err)';
+  $('#dt').textContent = ok ? 'Pembayaran berhasil' : 'Pembayaran kedaluwarsa';
+  $('#dm').textContent = ok ? 'Pesananmu sedang diproses otomatis. Simpan nomor pesanan di bawah.' : 'Silakan buat pesanan baru.';
+  $('#dr').textContent = j.reference;
+}
+
+load();
+</script>
 </body>
 </html>
